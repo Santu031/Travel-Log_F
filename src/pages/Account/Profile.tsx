@@ -54,13 +54,13 @@ export default function Profile() {
                 </div>
                 <div>
                   <p className="text-2xl font-bold">
-                    {userPosts.reduce((sum, post) => sum + post.likes, 0)}
+                    {userPosts.reduce((sum, post) => sum + post.likesCount, 0)}
                   </p>
                   <p className="text-sm text-muted-foreground">Total Likes</p>
                 </div>
                 <div>
                   <p className="text-2xl font-bold">
-                    {userPosts.reduce((sum, post) => sum + post.comments, 0)}
+                    {userPosts.reduce((sum, post) => sum + post.commentsCount, 0)}
                   </p>
                   <p className="text-sm text-muted-foreground">Total Comments</p>
                 </div>
@@ -83,7 +83,7 @@ export default function Profile() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {userPosts.map((post, index) => (
                 <motion.div
-                  key={post.id}
+                  key={post._id}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.05 }}

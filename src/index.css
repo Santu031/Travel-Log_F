@@ -8,85 +8,91 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 210 20% 15%;
+    /* Frosted cream background */
+    --background: 35 20% 97%;
+    --foreground: 211 100% 16%;
 
     --card: 0 0% 100%;
-    --card-foreground: 210 20% 15%;
+    --card-foreground: 211 100% 16%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 210 20% 15%;
+    --popover-foreground: 211 100% 16%;
 
-    /* Ocean teal - primary brand color */
-    --primary: 188 85% 38%;
+    /* Coral accent - primary */
+    --primary: 5 100% 69%;
     --primary-foreground: 0 0% 100%;
-    --primary-glow: 188 85% 48%;
 
-    /* Sunset coral - secondary/accent */
-    --secondary: 14 90% 65%;
+    /* Cool teal - secondary/accent */
+    --secondary: 174 64% 47%;
     --secondary-foreground: 0 0% 100%;
 
     --muted: 210 15% 96%;
-    --muted-foreground: 210 12% 50%;
+    --muted-foreground: 218 11% 42%;
 
-    /* Golden yellow accent */
-    --accent: 42 95% 58%;
-    --accent-foreground: 210 20% 15%;
+    /* Teal accent */
+    --accent: 174 64% 47%;
+    --accent-foreground: 211 100% 16%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 210 20% 90%;
+    --border: 210 20% 88%;
     --input: 210 20% 90%;
-    --ring: 188 85% 38%;
+    --ring: 5 100% 69%;
 
-    --radius: 0.75rem;
+    --radius: 1rem;
+
+    /* Glass effects */
+    --glass-light: rgba(255, 255, 255, 0.55);
+    --glass-dark: rgba(11, 37, 69, 0.12);
+    --glass-border: rgba(255, 255, 255, 0.06);
 
     /* Gradients */
-    --gradient-hero: linear-gradient(135deg, hsl(188 85% 38%), hsl(188 85% 48%));
-    --gradient-sunset: linear-gradient(135deg, hsl(14 90% 65%), hsl(42 95% 58%));
-    --gradient-overlay: linear-gradient(180deg, transparent, hsl(210 20% 15% / 0.6));
-
+    --gradient-overlay: linear-gradient(180deg, transparent, rgba(11, 37, 69, 0.5));
+    
     /* Shadows */
-    --shadow-card: 0 4px 20px -4px hsl(210 20% 15% / 0.08);
-    --shadow-hover: 0 8px 30px -6px hsl(188 85% 38% / 0.2);
+    --shadow-soft: 0 8px 30px rgba(11, 37, 69, 0.07);
+    --shadow-hover: 0 12px 40px rgba(11, 37, 69, 0.12);
     
     /* Animations */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .dark {
-    --background: 210 30% 8%;
+    --background: 211 100% 10%;
     --foreground: 210 15% 95%;
 
-    --card: 210 25% 12%;
+    --card: 211 80% 15%;
     --card-foreground: 210 15% 95%;
 
-    --popover: 210 25% 12%;
+    --popover: 211 80% 15%;
     --popover-foreground: 210 15% 95%;
 
-    --primary: 188 85% 45%;
+    --primary: 5 100% 69%;
     --primary-foreground: 0 0% 100%;
-    --primary-glow: 188 85% 55%;
 
-    --secondary: 14 85% 60%;
+    --secondary: 174 64% 47%;
     --secondary-foreground: 0 0% 100%;
 
     --muted: 210 20% 18%;
     --muted-foreground: 210 12% 60%;
 
-    --accent: 42 90% 55%;
-    --accent-foreground: 210 30% 8%;
+    --accent: 174 64% 47%;
+    --accent-foreground: 211 100% 10%;
 
     --destructive: 0 75% 55%;
     --destructive-foreground: 0 0% 100%;
 
     --border: 210 20% 20%;
     --input: 210 20% 20%;
-    --ring: 188 85% 45%;
+    --ring: 5 100% 69%;
 
-    --shadow-card: 0 4px 20px -4px hsl(0 0% 0% / 0.3);
-    --shadow-hover: 0 8px 30px -6px hsl(188 85% 45% / 0.3);
+    --glass-light: rgba(255, 255, 255, 0.08);
+    --glass-dark: rgba(255, 255, 255, 0.03);
+    --glass-border: rgba(255, 255, 255, 0.1);
+
+    --shadow-soft: 0 8px 30px rgba(0, 0, 0, 0.3);
+    --shadow-hover: 0 12px 40px rgba(0, 0, 0, 0.4);
   }
 }
 
@@ -114,42 +120,39 @@ All colors MUST be HSL.
 }
 
 @layer components {
-  /* Hero gradient backgrounds */
-  .bg-gradient-hero {
-    background: var(--gradient-hero);
+  /* Glassmorphism effects */
+  .glass {
+    background: var(--glass-light);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid var(--glass-border);
   }
 
-  .bg-gradient-sunset {
-    background: var(--gradient-sunset);
+  .glass-dark {
+    background: var(--glass-dark);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid var(--glass-border);
   }
 
-  /* Card styles */
-  .card-hover {
-    @apply transition-all duration-300;
-    box-shadow: var(--shadow-card);
+  /* Card styles with glass effect */
+  .card-glass {
+    @apply glass rounded-card-xl shadow-soft-glass transition-all duration-300;
   }
 
-  .card-hover:hover {
+  .card-glass:hover {
     @apply -translate-y-1;
     box-shadow: var(--shadow-hover);
   }
 
+  /* Image overlay gradient */
+  .img-overlay {
+    background: var(--gradient-overlay);
+  }
+
   /* Button variants */
-  .btn-hero {
-    @apply bg-gradient-hero text-primary-foreground hover:opacity-90;
-  }
-
-  .btn-secondary-glow {
-    @apply bg-secondary text-secondary-foreground hover:brightness-110;
-  }
-
-  /* Text gradients */
-  .text-gradient-primary {
-    @apply bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent;
-  }
-
-  .text-gradient-sunset {
-    @apply bg-gradient-to-r from-secondary to-accent bg-clip-text text-transparent;
+  .btn-glass {
+    @apply glass text-navy hover:bg-white/70 transition-all;
   }
 
   /* Skeleton loaders */
