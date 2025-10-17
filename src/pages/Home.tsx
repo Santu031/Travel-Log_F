@@ -10,17 +10,17 @@ export default function Home() {
 
   return (
     <div className="min-h-screen">
-      {/* Hero Section */}
-      <section className="relative bg-gradient-hero text-primary-foreground overflow-hidden">
+      {/* Hero Section - Full Screen */}
+      <section className="relative bg-gradient-hero text-primary-foreground overflow-hidden min-h-screen flex items-center">
         <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=1600')] bg-cover bg-center opacity-20" />
-        <div className="relative container mx-auto px-4 py-24 md:py-32">
+        <div className="relative container mx-auto px-4 w-full">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             className="max-w-3xl mx-auto text-center space-y-6"
           >
-            <h1 className="text-4xl md:text-6xl font-bold leading-tight">
+            <h1 className="text-5xl md:text-7xl font-bold leading-tight">
               Discover Your Next Adventure
             </h1>
             <p className="text-xl md:text-2xl text-primary-foreground/90">
