@@ -52,7 +52,7 @@ mock.onGet('/auth/me').reply(() => {
 
 // Posts endpoints
 mock.onGet('/posts').reply((config) => {
-  const { tag, sort, page = 1, filter = 'all' } = config.params || {};
+  const { tag, sort } = config.params || {};
   let posts = [...mockPosts];
   
   if (tag) {
@@ -60,75 +60,40 @@ mock.onGet('/posts').reply((config) => {
   }
   
   if (sort === 'popular') {
-    posts.sort((a, b) => b.likesCount - a.likesCount);
+    posts.sort((a, b) => b.likes - a.likes);
   } else {
     posts.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
   }
   
-  return [200, { posts, nextPage: Number(page) + 1 }];
+  return [200, posts];
 });
 
 mock.onGet(/\/posts\/\w+/).reply((config) => {
   const id = config.url?.split('/').pop();
-  const post = mockPosts.find(p => p._id === id);
+  const post = mockPosts.find(p => p.id === id);
   return post ? [200, post] : [404, { error: 'Post not found' }];
 });
 
 mock.onPost('/posts').reply((config) => {
   const postData = JSON.parse(config.data);
-  const currentUser = mockUsers[0];
   const newPost = {
-    _id: String(Date.now()),
-    userId: currentUser.id,
-    userName: currentUser.displayName,
-    userAvatar: currentUser.avatar,
-    images: postData.images || [],
-    caption: postData.caption,
-    location: postData.location,
-    tags: postData.tags,
-    likesCount: 0,
-    likedByUser: false,
-    commentsCount: 0,
+    ...postData,
+    id: String(Date.now()),
+    likes: 0,
+    comments: 0,
     createdAt: new Date().toISOString(),
   };
   mockPosts.unshift(newPost);
-  return [201, { success: true, post: newPost }];
+  return [201, newPost];
 });
 
 mock.onPost(/\/posts\/\w+\/like/).reply((config) => {
   const id = config.url?.split('/')[2];
-  const post = mockPosts.find(p => p._id === id);
+  const post = mockPosts.find(p => p.id === id);
   if (post) {
-    if (post.likedByUser) {
-      post.likesCount -= 1;
-      post.likedByUser = false;
-    } else {
-      post.likesCount += 1;
-      post.likedByUser = true;
-    }
-    return [200, { likesCount: post.likesCount, likedByUser: post.likedByUser }];
-  }
-  return [404, { error: 'Post not found' }];
-});
-
-mock.onPost(/\/posts\/\w+\/comment/).reply((config) => {
-  const id = config.url?.split('/')[2];
-  const { content } = JSON.parse(config.data);
-  const post = mockPosts.find(p => p._id === id);
-  const currentUser = mockUsers[0];
-  
-  if (post) {
-    const newComment = {
-      id: String(Date.now()),
-      postId: id,
-      userId: currentUser.id,
-      userName: currentUser.displayName,
-      userAvatar: currentUser.avatar,
-      content,
-      createdAt: new Date().toISOString(),
-    };
-    post.commentsCount += 1;
-    return [200, { comment: newComment }];
+    post.likes += 1;
+    post.liked = true;
+    return [200, post];
   }
   return [404, { error: 'Post not found' }];
 });
@@ -164,30 +129,6 @@ mock.onPost('/ai/recommendations').reply((config) => {
   
   // In a real app, this would use actual AI
   return [200, recommendations];
-});
-
-// User search and follow endpoints
-mock.onGet('/users/search').reply((config) => {
-  const { q } = config.params || {};
-  const users = mockUsers
-    .filter(u => u.displayName.toLowerCase().includes(q?.toLowerCase() || ''))
-    .map(u => ({
-      userId: u.id,
-      displayName: u.displayName,
-      avatar: u.avatar,
-      isFollowing: false,
-    }));
-  return [200, { users }];
-});
-
-mock.onPost(/\/users\/\w+\/follow/).reply(() => {
-  return [200, { isFollowing: true }];
-});
-
-// Stories endpoint
-mock.onGet('/stories').reply(async () => {
-  const { mockStories } = await import('./mockData');
-  return [200, { stories: mockStories }];
 });
 
 // Admin endpoints

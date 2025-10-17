@@ -11,7 +11,6 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import PostCard from '@/components/PostCard';
-import StoryBar from '@/components/StoryBar';
 import { useAuth } from '@/context/AuthContext';
 import api from '@/services/api';
 import type { Post } from '@/services/mockData';
@@ -38,7 +37,7 @@ export default function Gallery() {
           tag: tagFilter || undefined,
         },
       });
-      setPosts(data.posts || data);
+      setPosts(data);
     } catch (error) {
       console.error('Failed to fetch posts:', error);
     } finally {
@@ -48,10 +47,7 @@ export default function Gallery() {
 
   return (
     <div className="min-h-screen py-8">
-      <div className="container mx-auto px-4 max-w-5xl">
-        {/* Story Bar */}
-        <StoryBar />
-
+      <div className="container mx-auto px-4">
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
           <div>
@@ -112,7 +108,7 @@ export default function Gallery() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {posts.map((post, index) => (
               <motion.div
-                key={post._id}
+                key={post.id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.05 }}
