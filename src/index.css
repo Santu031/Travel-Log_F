@@ -43,9 +43,9 @@ All colors MUST be HSL.
     --radius: 1rem;
 
     /* Glass effects */
-    --glass-light: rgba(255, 255, 255, 0.55);
-    --glass-dark: rgba(11, 37, 69, 0.12);
-    --glass-border: rgba(255, 255, 255, 0.06);
+    --glass-light: rgba(255, 255, 255, 0.05);
+    --glass-dark: rgba(11, 37, 69, 0.05);
+    --glass-border: rgba(255, 255, 255, 0.1);
 
     /* Gradients */
     --gradient-overlay: linear-gradient(180deg, transparent, rgba(11, 37, 69, 0.5));
@@ -87,8 +87,8 @@ All colors MUST be HSL.
     --input: 210 20% 20%;
     --ring: 5 100% 69%;
 
-    --glass-light: rgba(255, 255, 255, 0.08);
-    --glass-dark: rgba(255, 255, 255, 0.03);
+    --glass-light: rgba(255, 255, 255, 0.03);
+    --glass-dark: rgba(255, 255, 255, 0.02);
     --glass-border: rgba(255, 255, 255, 0.1);
 
     --shadow-soft: 0 8px 30px rgba(0, 0, 0, 0.3);
@@ -122,16 +122,16 @@ All colors MUST be HSL.
 @layer components {
   /* Glassmorphism effects */
   .glass {
-    background: var(--glass-light);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
+    background: transparent;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     border: 1px solid var(--glass-border);
   }
 
   .glass-dark {
-    background: var(--glass-dark);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
+    background: transparent;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     border: 1px solid var(--glass-border);
   }
 
