@@ -60,9 +60,13 @@ export default function Gallery() {
                 {posts.map((post, index) => (
                   <motion.div
                     key={post.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.05 }}
+                    initial={{ opacity: 0, y: 30, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    transition={{ 
+                      delay: index * 0.08,
+                      duration: 0.5,
+                      ease: "easeOut"
+                    }}
                   >
                     <PostCard post={post} />
                   </motion.div>
@@ -87,13 +91,19 @@ export default function Gallery() {
 
         {/* Floating Action Button */}
         {isAuthenticated && (
-          <Button
-            size="lg"
-            className="fixed bottom-6 right-6 rounded-full h-14 w-14 shadow-lg"
-            onClick={() => navigate('/gallery/upload')}
+          <motion.div
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ delay: 0.5, type: "spring", stiffness: 200 }}
           >
-            <Plus className="h-6 w-6" />
-          </Button>
+            <Button
+              size="lg"
+              className="fixed bottom-6 right-6 rounded-full h-14 w-14 shadow-lg hover:scale-110 transition-transform"
+              onClick={() => navigate('/gallery/upload')}
+            >
+              <Plus className="h-6 w-6" />
+            </Button>
+          </motion.div>
         )}
       </div>
     </div>

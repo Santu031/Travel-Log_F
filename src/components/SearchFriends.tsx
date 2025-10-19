@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { motion } from 'framer-motion';
 import { Search, UserPlus, UserCheck } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -34,51 +35,69 @@ export default function SearchFriends() {
   };
 
   return (
-    <Card className="p-4">
-      <div className="relative mb-4">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-        <Input
-          placeholder="Search friends..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="pl-10"
-        />
-      </div>
+    <motion.div
+      initial={{ opacity: 0, x: 20 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.5 }}
+    >
+      <Card className="p-4">
+        <div className="relative mb-4">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search friends..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="pl-10"
+          />
+        </div>
 
-      <div className="space-y-3">
-        <h3 className="font-semibold text-sm text-muted-foreground">Suggested for you</h3>
-        {filteredUsers.map((user) => (
-          <div key={user.id} className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <Avatar className="h-10 w-10">
-                <AvatarImage src={user.avatar} alt={user.displayName} />
-                <AvatarFallback>{user.displayName[0]}</AvatarFallback>
-              </Avatar>
-              <div>
-                <p className="font-medium text-sm">{user.displayName}</p>
-                <p className="text-xs text-muted-foreground">Suggested for you</p>
-              </div>
-            </div>
-            <Button
-              size="sm"
-              variant={user.isFollowing ? 'outline' : 'default'}
-              onClick={() => toggleFollow(user.id)}
+        <div className="space-y-3">
+          <h3 className="font-semibold text-sm text-muted-foreground">Suggested for you</h3>
+          {filteredUsers.map((user, index) => (
+            <motion.div 
+              key={user.id} 
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: index * 0.1, duration: 0.3 }}
+              className="flex items-center justify-between group"
             >
-              {user.isFollowing ? (
-                <>
-                  <UserCheck className="h-4 w-4 mr-1" />
-                  Following
-                </>
-              ) : (
-                <>
-                  <UserPlus className="h-4 w-4 mr-1" />
-                  Follow
-                </>
-              )}
-            </Button>
-          </div>
-        ))}
-      </div>
-    </Card>
+              <div className="flex items-center gap-3">
+                <Avatar className="h-10 w-10 ring-2 ring-transparent group-hover:ring-primary transition-all">
+                  <AvatarImage src={user.avatar} alt={user.displayName} />
+                  <AvatarFallback>{user.displayName[0]}</AvatarFallback>
+                </Avatar>
+                <div>
+                  <p className="font-medium text-sm group-hover:text-primary transition-colors">{user.displayName}</p>
+                  <p className="text-xs text-muted-foreground">Suggested for you</p>
+                </div>
+              </div>
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Button
+                  size="sm"
+                  variant={user.isFollowing ? 'outline' : 'default'}
+                  onClick={() => toggleFollow(user.id)}
+                  className="transition-all duration-300"
+                >
+                  {user.isFollowing ? (
+                    <>
+                      <UserCheck className="h-4 w-4 mr-1" />
+                      Following
+                    </>
+                  ) : (
+                    <>
+                      <UserPlus className="h-4 w-4 mr-1" />
+                      Follow
+                    </>
+                  )}
+                </Button>
+              </motion.div>
+            </motion.div>
+          ))}
+        </div>
+      </Card>
+    </motion.div>
   );
 }

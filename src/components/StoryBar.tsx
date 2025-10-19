@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Plus } from 'lucide-react';
 
@@ -19,19 +20,29 @@ const mockStories: Story[] = [
 
 export default function StoryBar() {
   return (
-    <div className="glass rounded-xl p-4 mb-6">
+    <motion.div 
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="glass rounded-xl p-4 mb-6"
+    >
       <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
         {mockStories.map((story, index) => (
-          <button
+          <motion.button
             key={story.id}
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: index * 0.05, duration: 0.3 }}
+            whileHover={{ scale: 1.1, y: -5 }}
+            whileTap={{ scale: 0.95 }}
             className="flex flex-col items-center gap-1 min-w-[70px] group"
           >
-            <div className={`${story.hasNewStory ? 'story-ring' : 'p-[2px] bg-muted'} rounded-full`}>
+            <div className={`${story.hasNewStory ? 'story-ring' : 'p-[2px] bg-muted'} rounded-full transition-all duration-300`}>
               <div className="bg-background p-[3px] rounded-full">
-                <Avatar className="h-16 w-16">
+                <Avatar className="h-16 w-16 transition-transform group-hover:scale-105">
                   {index === 0 ? (
-                    <div className="w-full h-full bg-muted flex items-center justify-center">
-                      <Plus className="h-6 w-6 text-muted-foreground" />
+                    <div className="w-full h-full bg-gradient-to-br from-primary to-primary-glow flex items-center justify-center">
+                      <Plus className="h-6 w-6 text-primary-foreground" />
                     </div>
                   ) : (
                     <>
@@ -42,12 +53,12 @@ export default function StoryBar() {
                 </Avatar>
               </div>
             </div>
-            <span className="text-xs font-medium truncate w-full text-center">
+            <span className="text-xs font-medium truncate w-full text-center group-hover:text-primary transition-colors">
               {story.userName}
             </span>
-          </button>
+          </motion.button>
         ))}
       </div>
-    </div>
+    </motion.div>
   );
 }

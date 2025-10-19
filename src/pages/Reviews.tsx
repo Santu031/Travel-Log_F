@@ -43,16 +43,26 @@ export default function Reviews() {
   };
 
   return (
-    <div className="min-h-screen py-8">
-      <div className="container mx-auto px-4">
+    <div className="min-h-screen py-8 bg-muted/30">
+      <div className="container mx-auto px-4 max-w-6xl">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2">Travel Reviews</h1>
-          <p className="text-muted-foreground">Read honest reviews from fellow travelers</p>
-        </div>
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="mb-10 text-center"
+        >
+          <h1 className="text-5xl font-bold mb-3 text-gradient-primary">Travel Reviews</h1>
+          <p className="text-muted-foreground text-lg">Read honest reviews from fellow travelers</p>
+        </motion.div>
 
         {/* Filters */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10 bg-card p-6 rounded-lg shadow-sm"
+        >
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
@@ -96,23 +106,34 @@ export default function Reviews() {
               <SelectItem value="helpful">Most Helpful</SelectItem>
             </SelectContent>
           </Select>
-        </div>
+        </motion.div>
 
         {/* Reviews List */}
         {loading ? (
-          <div className="space-y-4">
+          <div className="space-y-6">
             {Array.from({ length: 3 }).map((_, i) => (
-              <div key={i} className="skeleton h-48 rounded-lg" />
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.1 }}
+              >
+                <div className="skeleton h-52 rounded-lg" />
+              </motion.div>
             ))}
           </div>
         ) : (
-          <div className="space-y-4">
+          <div className="space-y-6">
             {reviews.map((review, index) => (
               <motion.div
                 key={review.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.05 }}
+                initial={{ opacity: 0, y: 30, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{ 
+                  delay: index * 0.08,
+                  duration: 0.5,
+                  ease: "easeOut"
+                }}
               >
                 <ReviewCard review={review} />
               </motion.div>
@@ -121,9 +142,14 @@ export default function Reviews() {
         )}
 
         {!loading && reviews.length === 0 && (
-          <div className="text-center py-16">
-            <p className="text-muted-foreground text-lg">No reviews found matching your criteria</p>
-          </div>
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5 }}
+            className="text-center py-20 bg-card rounded-lg"
+          >
+            <p className="text-muted-foreground text-xl">No reviews found matching your criteria</p>
+          </motion.div>
         )}
       </div>
     </div>
