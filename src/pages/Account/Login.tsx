@@ -36,81 +36,163 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center py-12 px-4 bg-muted/30">
+    <div className="min-h-screen flex items-center justify-center py-12 px-4 relative overflow-hidden">
+      {/* Adventure Background */}
+      <div className="absolute inset-0 z-0">
+        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920')] bg-cover bg-center" />
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/60 via-secondary/40 to-accent/60 backdrop-blur-[2px]" />
+      </div>
+
+      {/* Floating Elements */}
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-md"
+        animate={{ 
+          y: [0, -20, 0],
+          opacity: [0.3, 0.6, 0.3]
+        }}
+        transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute top-20 left-10 w-64 h-64 bg-primary/20 rounded-full blur-3xl"
+      />
+      <motion.div
+        animate={{ 
+          y: [0, 20, 0],
+          opacity: [0.3, 0.6, 0.3]
+        }}
+        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+        className="absolute bottom-20 right-10 w-80 h-80 bg-secondary/20 rounded-full blur-3xl"
+      />
+
+      <motion.div
+        initial={{ opacity: 0, y: 30, scale: 0.95 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+        className="w-full max-w-md relative z-10"
       >
-        <Card className="p-8">
+        <div className="glass backdrop-blur-xl bg-background/40 border border-white/20 rounded-2xl p-8 shadow-2xl">
           <div className="text-center mb-8">
-            <Link to="/" className="inline-flex items-center gap-2 mb-4">
-              <Compass className="h-8 w-8 text-primary" />
-              <span className="text-2xl font-bold text-gradient-primary">TravelLog</span>
-            </Link>
-            <h1 className="text-2xl font-bold mb-2">Welcome Back</h1>
-            <p className="text-muted-foreground">Login to continue your journey</p>
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+            >
+              <Link to="/" className="inline-flex items-center gap-2 mb-6 group">
+                <motion.div
+                  whileHover={{ rotate: 360 }}
+                  transition={{ duration: 0.6 }}
+                >
+                  <Compass className="h-10 w-10 text-primary" />
+                </motion.div>
+                <span className="text-3xl font-bold text-gradient-primary group-hover:scale-105 transition-transform">
+                  TravelLog
+                </span>
+              </Link>
+            </motion.div>
+            <motion.h1 
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="text-3xl font-bold mb-2 text-foreground"
+            >
+              Welcome Back
+            </motion.h1>
+            <motion.p 
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+              className="text-foreground/70"
+            >
+              Login to continue your adventure
+            </motion.p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <motion.div 
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.5 }}
+              className="space-y-2"
+            >
+              <Label htmlFor="email" className="text-foreground font-medium">Email</Label>
+              <div className="relative group">
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
                 <Input
                   id="email"
                   type="email"
                   placeholder="you@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="pl-10"
+                  className="pl-10 bg-background/50 border-white/20 focus:border-primary focus:bg-background/70 transition-all"
                   required
                 />
               </div>
-            </div>
+            </motion.div>
 
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <motion.div 
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.6 }}
+              className="space-y-2"
+            >
+              <Label htmlFor="password" className="text-foreground font-medium">Password</Label>
+              <div className="relative group">
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
                 <Input
                   id="password"
                   type="password"
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="pl-10"
+                  className="pl-10 bg-background/50 border-white/20 focus:border-primary focus:bg-background/70 transition-all"
                   required
                 />
               </div>
-            </div>
+            </motion.div>
 
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Logging in...
-                </>
-              ) : (
-                'Login'
-              )}
-            </Button>
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.7 }}
+            >
+              <Button 
+                type="submit" 
+                className="w-full bg-gradient-hero hover:opacity-90 transition-all hover:scale-[1.02] shadow-lg" 
+                disabled={loading}
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Logging in...
+                  </>
+                ) : (
+                  'Start Your Adventure'
+                )}
+              </Button>
+            </motion.div>
 
-            <div className="relative my-6">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.8 }}
+              className="relative my-6"
+            >
               <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t" />
+                <span className="w-full border-t border-white/20" />
               </div>
               <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-card px-2 text-muted-foreground">Or continue with</span>
+                <span className="bg-background/40 px-3 text-foreground/70 backdrop-blur-sm">Or continue with</span>
               </div>
-            </div>
+            </motion.div>
 
-            <Button
-              type="button"
-              variant="outline"
-              className="w-full"
-              onClick={handleGoogleLogin}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.9 }}
             >
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full bg-background/30 border-white/30 hover:bg-background/50 hover:scale-[1.02] transition-all"
+                onClick={handleGoogleLogin}
+              >
               <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">
                 <path
                   fill="currentColor"
@@ -131,20 +213,31 @@ export default function Login() {
               </svg>
               Continue with Google
             </Button>
+            </motion.div>
           </form>
 
-          <div className="mt-6 text-center">
-            <p className="text-sm text-muted-foreground">
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1 }}
+            className="mt-8 text-center"
+          >
+            <p className="text-sm text-foreground/70">
               Don't have an account?{' '}
-              <Link to="/account/register" className="text-primary hover:underline font-medium">
-                Sign up
+              <Link to="/account/register" className="text-primary hover:text-primary-glow font-semibold hover:underline transition-colors">
+                Start Your Journey
               </Link>
             </p>
-            <p className="text-xs text-muted-foreground mt-4">
+            <motion.p 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 1.2 }}
+              className="text-xs text-foreground/50 mt-4 bg-background/30 rounded-full px-4 py-2 inline-block backdrop-blur-sm"
+            >
               Demo: Use any email with password "password"
-            </p>
-          </div>
-        </Card>
+            </motion.p>
+          </motion.div>
+        </div>
       </motion.div>
     </div>
   );
