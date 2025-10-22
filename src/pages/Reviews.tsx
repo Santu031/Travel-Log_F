@@ -43,7 +43,7 @@ export default function Reviews() {
   };
 
   return (
-    <div className="min-h-screen py-8 relative overflow-hidden">
+    <div className="relative overflow-hidden py-8">
       {/* Background */}
       <div className="absolute inset-0 z-0">
         <img 
@@ -66,7 +66,7 @@ export default function Reviews() {
         className="absolute bottom-40 left-10 w-40 h-40 bg-accent/20 rounded-full blur-3xl"
       />
 
-      <div className="container mx-auto px-4 max-w-6xl relative z-10">
+      <div className="container mx-auto px-4 max-w-6xl relative z-10 pb-12">
         {/* Header */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
