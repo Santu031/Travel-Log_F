@@ -178,7 +178,7 @@ export default function Login() {
                 <span className="w-full border-t border-white/20" />
               </div>
               <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-background/40 px-3 text-foreground/70 backdrop-blur-sm">Or continue with</span>
+                <span className="bg-background/40 px-4 py-1 text-foreground/70 backdrop-blur-sm rounded-full">Or continue with</span>
               </div>
             </motion.div>
 
