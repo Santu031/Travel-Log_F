@@ -30,7 +30,7 @@ export default function Reviews() {
       const { data } = await api.get('/reviews', {
         params: {
           destination: searchTerm || undefined,
-          rating: ratingFilter || undefined,
+          rating: ratingFilter && ratingFilter !== 'all' ? ratingFilter : undefined,
           sort: sortBy,
         },
       });
@@ -100,7 +100,7 @@ export default function Reviews() {
               <SelectValue placeholder="Filter by rating" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Ratings</SelectItem>
+              <SelectItem value="all">All Ratings</SelectItem>
               <SelectItem value="5">
                 <div className="flex items-center gap-1">
                   5 <Star className="h-3 w-3 fill-accent text-accent" />
