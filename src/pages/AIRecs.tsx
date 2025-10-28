@@ -53,23 +53,39 @@ export default function AIRecs() {
   };
 
   return (
-    <div className="min-h-screen py-8">
+    <div className="min-h-screen py-12 bg-gradient-to-br from-background via-primary/5 to-background">
       <div className="container mx-auto px-4">
         {/* Header */}
-        <div className="text-center mb-12">
-          <div className="flex items-center justify-center gap-2 mb-4">
-            <Sparkles className="h-8 w-8 text-primary" />
-            <h1 className="text-4xl font-bold">AI Travel Recommendations</h1>
-          </div>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+        <div className="text-center mb-16">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex items-center justify-center gap-3 mb-6"
+          >
+            <div className="p-3 rounded-2xl bg-gradient-primary">
+              <Sparkles className="h-10 w-10 text-white" />
+            </div>
+            <h1 className="text-5xl font-bold text-gradient-primary">AI Travel Recommendations</h1>
+          </motion.div>
+          <motion.p 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="text-muted-foreground text-xl max-w-3xl mx-auto"
+          >
             Tell us about your dream trip and let our AI suggest the perfect destinations for you
-          </p>
+          </motion.p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Form */}
-          <Card className="p-6 lg:col-span-1 h-fit sticky top-24">
-            <form onSubmit={handleSubmit} className="space-y-6">
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.2 }}
+          >
+            <Card className="p-8 lg:col-span-1 h-fit sticky top-24 glass border-white/20 shadow-2xl">
+              <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-2">
                 <Label htmlFor="duration">Trip Duration (days)</Label>
                 <Input
@@ -114,21 +130,22 @@ export default function AIRecs() {
                 />
               </div>
 
-              <Button type="submit" className="w-full" disabled={loading}>
+              <Button type="submit" className="w-full btn-hero" disabled={loading}>
                 {loading ? (
                   <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                     Generating...
                   </>
                 ) : (
                   <>
-                    <Sparkles className="mr-2 h-4 w-4" />
+                    <Sparkles className="mr-2 h-5 w-5" />
                     Get Recommendations
                   </>
                 )}
               </Button>
             </form>
           </Card>
+          </motion.div>
 
           {/* Results */}
           <div className="lg:col-span-2 space-y-6">
@@ -142,38 +159,44 @@ export default function AIRecs() {
               recommendations.map((rec, index) => (
                 <motion.div
                   key={rec.id}
-                  initial={{ opacity: 0, y: 20 }}
+                  initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
+                  transition={{ delay: index * 0.15, type: "spring" }}
+                  whileHover={{ scale: 1.02, y: -5 }}
                 >
-                  <Card className="overflow-hidden card-hover">
+                  <Card className="overflow-hidden glass border-white/20 shadow-2xl">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-0">
                       {/* Image */}
-                      <div className="aspect-video md:aspect-auto overflow-hidden">
+                      <div className="aspect-video md:aspect-auto overflow-hidden relative group">
                         <img
                           src={rec.image}
                           alt={rec.destination}
-                          className="w-full h-full object-cover"
+                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                         />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                       </div>
 
                       {/* Content */}
-                      <div className="p-6 space-y-4">
+                      <div className="p-8 space-y-4 bg-gradient-to-br from-background/50 to-primary/5">
                         <div className="flex items-start justify-between">
                           <div>
-                            <h3 className="text-2xl font-bold">{rec.destination}</h3>
-                            <p className="text-muted-foreground">{rec.country}</p>
+                            <h3 className="text-3xl font-bold text-gradient-primary mb-1">{rec.destination}</h3>
+                            <p className="text-muted-foreground flex items-center gap-2">
+                              <MapPin className="h-4 w-4" />
+                              {rec.country}
+                            </p>
                           </div>
                           <div className="flex flex-col items-end gap-2">
-                            <Badge className="bg-primary/10 text-primary">
-                              Score: {rec.score}%
+                            <Badge className="bg-gradient-primary text-white px-4 py-1 text-base">
+                              {rec.score}%
                             </Badge>
                             <Button
                               size="sm"
                               variant="ghost"
+                              className="hover:bg-primary/20 hover:text-primary"
                               onClick={() => handleSaveToWishlist(rec)}
                             >
-                              <Bookmark className="h-4 w-4" />
+                              <Bookmark className="h-5 w-5" />
                             </Button>
                           </div>
                         </div>
@@ -208,13 +231,21 @@ export default function AIRecs() {
                 </motion.div>
               ))
             ) : (
-              <Card className="p-12 text-center">
-                <Sparkles className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
-                <h3 className="text-xl font-semibold mb-2">Ready to Discover?</h3>
-                <p className="text-muted-foreground">
-                  Fill out the form to get personalized AI-powered travel recommendations
-                </p>
-              </Card>
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.3 }}
+              >
+                <Card className="p-16 text-center glass border-white/20 shadow-2xl">
+                  <div className="p-4 rounded-full bg-gradient-primary w-20 h-20 mx-auto mb-6 flex items-center justify-center">
+                    <Sparkles className="h-10 w-10 text-white" />
+                  </div>
+                  <h3 className="text-2xl font-bold mb-3 text-gradient-primary">Ready to Discover?</h3>
+                  <p className="text-muted-foreground text-lg">
+                    Fill out the form to get personalized AI-powered travel recommendations
+                  </p>
+                </Card>
+              </motion.div>
             )}
           </div>
         </div>

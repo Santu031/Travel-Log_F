@@ -31,22 +31,24 @@ export default function Header() {
   ];
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
+    <header className="sticky top-0 z-50 w-full border-b border-white/10 glass backdrop-blur-xl">
       <div className="container mx-auto px-4">
-        <div className="flex h-16 items-center justify-between">
+        <div className="flex h-20 items-center justify-between">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2">
-            <Compass className="h-6 w-6 text-primary" />
-            <span className="text-xl font-bold text-gradient-primary">TravelLog</span>
+          <Link to="/" className="flex items-center gap-3 group">
+            <div className="p-2 rounded-xl bg-gradient-primary">
+              <Compass className="h-6 w-6 text-white" />
+            </div>
+            <span className="text-2xl font-bold text-gradient-primary group-hover:scale-105 transition-transform">TravelLog</span>
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-6">
+          <nav className="hidden md:flex items-center gap-2">
             {navLinks.map((link) => (
               <Link
                 key={link.to}
                 to={link.to}
-                className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors"
+                className="px-4 py-2 rounded-xl text-sm font-medium text-foreground/90 hover:text-primary hover:bg-primary/10 transition-all"
               >
                 {link.label}
               </Link>
