@@ -34,7 +34,9 @@ export default function Gallery() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-secondary/10">
+      {/* Hero Section */}
       <div className="relative overflow-hidden py-16 md:py-24">
+        {/* Background */}
         <div className="absolute inset-0 z-0">
           <img 
             src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920" 
@@ -43,6 +45,8 @@ export default function Gallery() {
           />
           <div className="absolute inset-0 bg-gradient-to-br from-primary/80 via-secondary/60 to-accent/70 backdrop-blur-[2px]" />
         </div>
+
+        {/* Floating elements */}
         <motion.div
           animate={{ y: [0, 20, 0], rotate: [0, 5, 0] }}
           transition={{ duration: 8, repeat: Infinity }}
@@ -93,10 +97,15 @@ export default function Gallery() {
 
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Main Content */}
           <div className="lg:col-span-2 space-y-8">
+            {/* Story Bar */}
             <StoryBar />
+
+            {/* Posts Section */}
             <div className="space-y-6">
               <h2 className="text-2xl font-bold text-foreground">Latest Posts</h2>
+
               {loading ? (
                 <div className="flex justify-center items-center h-64">
                   <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
@@ -111,6 +120,7 @@ export default function Gallery() {
                       transition={{ delay: index * 0.1 }}
                       className="glass backdrop-blur-xl bg-white/10 border border-white/20 rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-300"
                     >
+                      {/* Post Header */}
                       <div className="p-4 flex items-center gap-3">
                         <img 
                           src={post.userAvatar} 
@@ -125,6 +135,8 @@ export default function Gallery() {
                           </div>
                         </div>
                       </div>
+
+                      {/* Post Image */}
                       <div className="relative">
                         <img 
                           src={post.images[0]} 
@@ -133,9 +145,13 @@ export default function Gallery() {
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
                       </div>
+
+                      {/* Post Content */}
                       <div className="p-4">
                         <h3 className="font-bold text-lg text-foreground mb-2">{post.title}</h3>
                         <p className="text-muted-foreground mb-3">{post.caption}</p>
+                        
+                        {/* Tags */}
                         <div className="flex flex-wrap gap-2 mb-4">
                           {post.tags.map((tag, tagIndex) => (
                             <span 
@@ -146,6 +162,8 @@ export default function Gallery() {
                             </span>
                           ))}
                         </div>
+
+                        {/* Post Stats */}
                         <div className="flex items-center justify-between pt-3 border-t border-white/10">
                           <div className="flex items-center gap-4">
                             <button className="flex items-center gap-1 text-muted-foreground hover:text-primary transition-colors">
@@ -188,6 +206,8 @@ export default function Gallery() {
               )}
             </div>
           </div>
+
+          {/* Sidebar */}
           <div className="space-y-6">
             <SearchFriends />
           </div>

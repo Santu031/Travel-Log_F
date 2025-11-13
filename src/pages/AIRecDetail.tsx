@@ -31,6 +31,13 @@ export default function AIRecDetail() {
   const fetchRecommendation = async () => {
     try {
       setLoading(true);
+      // In a real implementation, this would fetch the specific recommendation from the backend
+      // For now, we'll use a placeholder since we don't have a specific endpoint
+      // In a production app, you would have an endpoint like:
+      // const response = await api.get(`/ai/recommendations/${id}`);
+      // setRecommendation(response.data);
+      
+      // For now, we'll show a loading state and then display a message
       await new Promise(resolve => setTimeout(resolve, 1000));
       setRecommendation(null);
     } catch (error) {
@@ -68,6 +75,7 @@ export default function AIRecDetail() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-secondary/10">
+      {/* Hero Section */}
       <div className="relative h-96 overflow-hidden">
         <img 
           src={recommendation.image} 
@@ -114,6 +122,7 @@ export default function AIRecDetail() {
 
       <div className="container mx-auto px-4 py-12">
         <div className="max-w-4xl mx-auto">
+          {/* Stats */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
             <div className="glass backdrop-blur-xl bg-white/10 border border-white/20 rounded-2xl p-6">
               <div className="flex items-center gap-3 mb-3">
@@ -139,6 +148,8 @@ export default function AIRecDetail() {
               <p className="text-2xl font-bold">{recommendation.score}/10</p>
             </div>
           </div>
+
+          {/* Itinerary */}
           <div className="glass backdrop-blur-xl bg-white/10 border border-white/20 rounded-2xl p-6 mb-8">
             <h2 className="text-2xl font-bold mb-6">Suggested Itinerary</h2>
             <div className="space-y-4">
@@ -152,6 +163,8 @@ export default function AIRecDetail() {
               ))}
             </div>
           </div>
+
+          {/* Action Buttons */}
           <div className="flex flex-wrap gap-4">
             <Button 
               size="lg" 
