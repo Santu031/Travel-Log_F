@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { Heart, MessageCircle, Send, Bookmark, MapPin } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import type { Post } from '@/services/mockData';
+import type { Post } from '@/types';
 
 interface PostCardProps {
   post: Post;

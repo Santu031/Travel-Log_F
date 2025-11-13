@@ -6,7 +6,6 @@ import { Card } from '@/components/ui/card';
 export default function About() {
   return (
     <div className="min-h-screen">
-      {/* Hero */}
       <section className="bg-gradient-hero text-primary-foreground py-16 md:py-24">
         <div className="container mx-auto px-4 text-center space-y-6">
           <motion.div
@@ -22,8 +21,6 @@ export default function About() {
           </motion.div>
         </div>
       </section>
-
-      {/* Mission */}
       <section className="py-16">
         <div className="container mx-auto px-4 max-w-4xl">
           <motion.div
@@ -42,8 +39,6 @@ export default function About() {
           </motion.div>
         </div>
       </section>
-
-      {/* Values */}
       <section className="py-16 bg-muted/30">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-12">What We Stand For</h2>
@@ -100,8 +95,6 @@ export default function About() {
           </div>
         </div>
       </section>
-
-      {/* FAQ */}
       <section className="py-16">
         <div className="container mx-auto px-4 max-w-3xl">
           <h2 className="text-3xl font-bold text-center mb-12">Frequently Asked Questions</h2>
@@ -133,8 +126,6 @@ export default function About() {
           </div>
         </div>
       </section>
-
-      {/* Contact CTA */}
       <section className="py-16 bg-gradient-sunset text-secondary-foreground">
         <div className="container mx-auto px-4 text-center space-y-6">
           <Mail className="h-12 w-12 mx-auto" />

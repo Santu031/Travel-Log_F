@@ -12,12 +12,17 @@ import About from "./pages/About";
 import Gallery from "./pages/Gallery";
 import Reviews from "./pages/Reviews";
 import AIRecs from "./pages/AIRecs";
+import AIRecDetail from "./pages/AIRecDetail";
 import Login from "./pages/Account/Login";
 import Register from "./pages/Account/Register";
 import Profile from "./pages/Account/Profile";
+import UserProfile from "./pages/Account/UserProfile";
 import Settings from "./pages/Account/Settings";
-import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
+import Report from "./pages/Report";
+
+import TravelLogForm from "./pages/TravelLogForm";
+import UploadPhoto from "./pages/UploadPhoto.jsx";
 
 const queryClient = new QueryClient();
 
@@ -37,6 +42,7 @@ const App = () => (
                 <Route path="/gallery" element={<Gallery />} />
                 <Route path="/reviews" element={<Reviews />} />
                 <Route path="/ai-recs" element={<AIRecs />} />
+                <Route path="/ai-recs/:id" element={<AIRecDetail />} />
                 <Route path="/account/login" element={<Login />} />
                 <Route path="/account/register" element={<Register />} />
                 <Route
@@ -44,6 +50,14 @@ const App = () => (
                   element={
                     <ProtectedRoute>
                       <Profile />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/account/profile/:userId"
+                  element={
+                    <ProtectedRoute>
+                      <UserProfile />
                     </ProtectedRoute>
                   }
                 />
@@ -56,14 +70,29 @@ const App = () => (
                   }
                 />
                 <Route
-                  path="/admin"
+                  path="/report"
                   element={
-                    <ProtectedRoute adminOnly>
-                      <Admin />
+                    <ProtectedRoute>
+                      <Report />
                     </ProtectedRoute>
                   }
                 />
-                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                <Route
+                  path="/travel/new"
+                  element={
+                    <ProtectedRoute>
+                      <TravelLogForm />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/gallery/upload"
+                  element={
+                    <ProtectedRoute>
+                      <UploadPhoto />
+                    </ProtectedRoute>
+                  }
+                />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </main>

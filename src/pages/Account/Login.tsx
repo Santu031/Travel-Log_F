@@ -5,7 +5,6 @@ import { Mail, Lock, Loader2, Compass } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card } from '@/components/ui/card';
 import { useAuth } from '@/context/AuthContext';
 import { toast } from 'sonner';
 
@@ -21,18 +20,39 @@ export default function Login() {
     setLoading(true);
 
     try {
-      await login(email, password);
-      toast.success('Welcome back!');
-      navigate('/');
-    } catch (error) {
-      toast.error('Invalid email or password');
+      const result = await login(email, password);
+      
+      if (result.success) {
+        toast.success('Welcome back!', {
+          description: 'You have been successfully logged in.',
+          duration: 3000,
+        });
+        // Add a small delay to ensure the toast is visible before navigation
+        setTimeout(() => {
+          navigate('/');
+        }, 1000);
+      } else {
+        toast.error('Login failed', {
+          description: result.message || 'Invalid email or password',
+          duration: 5000,
+        });
+      }
+    } catch (error: any) {
+      console.error('Login error:', error);
+      toast.error('Login failed', {
+        description: 'An unexpected error occurred. Please try again.',
+        duration: 5000,
+      });
     } finally {
       setLoading(false);
     }
   };
 
   const handleGoogleLogin = () => {
-    toast.info('Google authentication requires backend integration');
+    toast.info('Google authentication', {
+      description: 'Google authentication requires backend integration',
+      duration: 3000,
+    });
   };
 
   return (
@@ -228,14 +248,6 @@ export default function Login() {
                 Start Your Journey
               </Link>
             </p>
-            <motion.p 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 1.2 }}
-              className="text-xs text-foreground/50 mt-4 bg-background/30 rounded-full px-4 py-2 inline-block backdrop-blur-sm"
-            >
-              Demo: Use any email with password "password"
-            </motion.p>
           </motion.div>
         </div>
       </motion.div>

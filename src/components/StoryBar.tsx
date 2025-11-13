@@ -1,6 +1,9 @@
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Plus } from 'lucide-react';
+import api from '@/services/api';
+import { useAuth } from '@/context/AuthContext';
 
 interface Story {
   id: string;
@@ -9,16 +12,69 @@ interface Story {
   hasNewStory: boolean;
 }
 
-const mockStories: Story[] = [
-  { id: '1', userName: 'You', userAvatar: '', hasNewStory: false },
-  { id: '2', userName: 'Sarah', userAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah', hasNewStory: true },
-  { id: '3', userName: 'Mike', userAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Mike', hasNewStory: true },
-  { id: '4', userName: 'Emma', userAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Emma', hasNewStory: true },
-  { id: '5', userName: 'John', userAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=John', hasNewStory: false },
-  { id: '6', userName: 'Lisa', userAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Lisa', hasNewStory: true },
-];
-
 export default function StoryBar() {
+  const [stories, setStories] = useState<Story[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { user } = useAuth();
+
+  useEffect(() => {
+    fetchStories();
+  }, []);
+
+  const fetchStories = async () => {
+    try {
+      setLoading(true);
+      // Fetch stories from the backend
+      // For now, we'll use a simplified approach since we don't have a specific stories endpoint
+      // In a real implementation, this would fetch actual stories from the backend
+      
+      // We'll create a placeholder story for the current user
+      const currentUserStory: Story = {
+        id: 'current-user',
+        userName: 'You',
+        userAvatar: user?.avatar || '',
+        hasNewStory: false
+      };
+      
+      // Fetch some recent users who have posted photos
+      const response = await api.get('/gallery/users');
+      const userStories: Story[] = response.data.slice(0, 5).map((user: any) => ({
+        id: user.id,
+        userName: user.name,
+        userAvatar: user.avatar,
+        hasNewStory: true
+      }));
+      
+      setStories([currentUserStory, ...userStories]);
+    } catch (error) {
+      console.error('Failed to fetch stories:', error);
+      // Fallback to empty array if fetch fails
+      setStories([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <motion.div 
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="glass rounded-xl p-4 mb-6"
+      >
+        <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
+          {[...Array(6)].map((_, index) => (
+            <div key={index} className="flex flex-col items-center gap-1 min-w-[70px]">
+              <div className="rounded-full bg-muted animate-pulse h-16 w-16" />
+              <div className="h-3 w-12 bg-muted animate-pulse rounded" />
+            </div>
+          ))}
+        </div>
+      </motion.div>
+    );
+  }
+
   return (
     <motion.div 
       initial={{ opacity: 0, y: -20 }}
@@ -27,7 +83,7 @@ export default function StoryBar() {
       className="glass rounded-xl p-4 mb-6"
     >
       <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
-        {mockStories.map((story, index) => (
+        {stories.map((story, index) => (
           <motion.button
             key={story.id}
             initial={{ opacity: 0, scale: 0.8 }}

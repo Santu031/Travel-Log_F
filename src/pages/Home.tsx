@@ -1,12 +1,80 @@
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Sparkles, MapPin, Users, TrendingUp, ArrowRight } from 'lucide-react';
+import { Sparkles, MapPin, Users, TrendingUp, ArrowRight, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import PostCard from '@/components/PostCard';
-import { mockPosts } from '@/services/mockData';
+import api from '@/services/api';
+import type { Post } from '@/types';
 
 export default function Home() {
-  const trendingPosts = mockPosts.slice(0, 3);
+  const [trendingPosts, setTrendingPosts] = useState<Post[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchTrendingPosts();
+  }, []);
+
+  const fetchTrendingPosts = async () => {
+    try {
+      setLoading(true);
+      const { data } = await api.get('/gallery/posts/trending');
+      setTrendingPosts(data.slice(0, 3));
+    } catch (error) {
+      console.error('Failed to fetch trending posts:', error);
+      // Fallback to mock data if API fails
+      const mockPosts: Post[] = [
+        {
+          id: '1',
+          userId: '1',
+          userName: 'Sarah Chen',
+          userAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah',
+          images: [
+            'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=800',
+            'https://images.unsplash.com/photo-1488085061387-422e29b40080?w=800',
+          ],
+          title: 'Sunset in Santorini',
+          caption: 'The most breathtaking sunset I\'ve ever witnessed. Santorini never disappoints! 🌅',
+          tags: ['sunset', 'greece', 'santorini', 'travel'],
+          location: 'Santorini, Greece',
+          likes: 342,
+          comments: 28,
+          createdAt: '2024-03-15T18:30:00Z',
+        },
+        {
+          id: '2',
+          userId: '1',
+          userName: 'Sarah Chen',
+          userAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah',
+          images: ['https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=800'],
+          title: 'Korean Street Food',
+          caption: 'Exploring the incredible street food scene in Seoul 🍜',
+          tags: ['food', 'korea', 'seoul', 'streetfood'],
+          location: 'Seoul, South Korea',
+          likes: 256,
+          comments: 19,
+          createdAt: '2024-03-12T12:00:00Z',
+        },
+        {
+          id: '3',
+          userId: '1',
+          userName: 'Sarah Chen',
+          userAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah',
+          images: ['https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800'],
+          title: 'Mountain Hiking',
+          caption: 'The journey is always worth it when you reach the top 🏔️',
+          tags: ['hiking', 'mountains', 'nature', 'adventure'],
+          location: 'Swiss Alps',
+          likes: 421,
+          comments: 35,
+          createdAt: '2024-03-10T09:15:00Z',
+        },
+      ];
+      setTrendingPosts(mockPosts);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen">
@@ -150,20 +218,26 @@ export default function Home() {
             </Button>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {trendingPosts.map((post, index) => (
-              <motion.div
-                key={post.id}
-                initial={{ opacity: 0, y: 30, scale: 0.9 }}
-                whileInView={{ opacity: 1, y: 0, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1, duration: 0.5 }}
-                whileHover={{ y: -8 }}
-              >
-                <PostCard post={post} />
-              </motion.div>
-            ))}
-          </div>
+          {loading ? (
+            <div className="flex justify-center items-center h-64">
+              <Loader2 className="h-8 w-8 animate-spin" />
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {trendingPosts.map((post, index) => (
+                <motion.div
+                  key={post.id}
+                  initial={{ opacity: 0, y: 30, scale: 0.9 }}
+                  whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.1, duration: 0.5 }}
+                  whileHover={{ y: -8 }}
+                >
+                  <PostCard post={post} />
+                </motion.div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { User, Mail, Lock, Save } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -10,26 +10,58 @@ import { Switch } from '@/components/ui/switch';
 import { useAuth } from '@/context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
+import api from '@/services/api';
 
 export default function Settings() {
   const { user, updateUser } = useAuth();
   const navigate = useNavigate();
 
-  const [displayName, setDisplayName] = useState(user?.displayName || '');
-  const [bio, setBio] = useState(user?.bio || '');
+  const [name, setName] = useState(user?.name || '');
+  const [bio, setBio] = useState('');
   const [privateAccount, setPrivateAccount] = useState(false);
+  const [avatarSeed, setAvatarSeed] = useState(user?.name || 'user');
+  const [avatarUrl, setAvatarUrl] = useState('');
+
+  // Generate avatar URL when avatarSeed changes
+  useEffect(() => {
+    setAvatarUrl(`https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(avatarSeed)}`);
+  }, [avatarSeed]);
+
+  // Initialize avatar seed from user name
+  useEffect(() => {
+    if (user?.name) {
+      setAvatarSeed(user.name);
+    }
+  }, [user?.name]);
 
   if (!user) {
     navigate('/account/login');
     return null;
   }
 
-  const handleSave = () => {
-    updateUser({
-      displayName,
-      bio,
-    });
-    toast.success('Settings saved successfully!');
+  const handleSave = async () => {
+    try {
+      // Update user profile with avatar
+      const response = await api.put('/auth/profile', {
+        name,
+        avatar: avatarUrl
+      });
+      
+      updateUser(response.data.user);
+      toast.success('Settings saved successfully!');
+    } catch (error) {
+      console.error('Failed to save settings:', error);
+      toast.error('Failed to save settings');
+    }
+  };
+
+  const handleAvatarSeedChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setAvatarSeed(e.target.value);
+  };
+
+  const generateRandomAvatar = () => {
+    const randomSeed = Math.random().toString(36).substring(2, 15);
+    setAvatarSeed(randomSeed);
   };
 
   return (
@@ -49,14 +81,47 @@ export default function Settings() {
           <Card className="p-6">
             <h2 className="text-xl font-semibold mb-6">Profile Information</h2>
             <div className="space-y-6">
+              {/* Avatar Section */}
+              <div className="space-y-4">
+                <Label>Profile Avatar</Label>
+                <div className="flex items-center gap-6">
+                  <img 
+                    src={avatarUrl} 
+                    alt="Avatar preview" 
+                    className="w-20 h-20 rounded-full border-2 border-primary"
+                  />
+                  <div className="flex-1 space-y-3">
+                    <div className="space-y-2">
+                      <Label htmlFor="avatarSeed">Avatar Seed</Label>
+                      <Input
+                        id="avatarSeed"
+                        value={avatarSeed}
+                        onChange={handleAvatarSeedChange}
+                        placeholder="Enter name or any text for avatar"
+                      />
+                    </div>
+                    <Button 
+                      type="button" 
+                      variant="outline" 
+                      onClick={generateRandomAvatar}
+                    >
+                      Generate Random Avatar
+                    </Button>
+                  </div>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Your avatar is generated using DiceBear Avataaars. Change the seed text to get a different avatar.
+                </p>
+              </div>
+
               <div className="space-y-2">
                 <Label htmlFor="displayName">Display Name</Label>
                 <div className="relative">
                   <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
                     id="displayName"
-                    value={displayName}
-                    onChange={(e) => setDisplayName(e.target.value)}
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
                     className="pl-10"
                   />
                 </div>

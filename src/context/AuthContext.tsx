@@ -1,141 +1,136 @@
-import { createContext, useContext, useReducer, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useState, ReactNode } from 'react';
 import api from '@/services/api';
-import type { User } from '@/services/mockData';
 
-interface AuthState {
-  user: User | null;
-  token: string | null;
-  isLoading: boolean;
-  isAuthenticated: boolean;
+interface User {
+  id: string;
+  name: string;
+  email: string;
+  avatar?: string;
+  role?: string;
 }
 
-type AuthAction =
-  | { type: 'LOGIN_SUCCESS'; payload: { user: User; token: string } }
-  | { type: 'LOGOUT' }
-  | { type: 'UPDATE_USER'; payload: User }
-  | { type: 'SET_LOADING'; payload: boolean };
-
-interface AuthContextType extends AuthState {
-  login: (email: string, password: string) => Promise<void>;
-  register: (email: string, displayName: string, password: string) => Promise<void>;
+interface AuthContextType {
+  user: User | null;
+  isAuthenticated: boolean;
+  login: (email: string, password: string) => Promise<{ success: boolean; message?: string }>;
+  register: (name: string, email: string, password: string) => Promise<{ success: boolean; message?: string }>;
   logout: () => void;
-  updateUser: (updates: Partial<User>) => void;
+  updateUser: (userData: Partial<User>) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const initialState: AuthState = {
-  user: null,
-  token: localStorage.getItem('token'),
-  isLoading: true,
-  isAuthenticated: false,
-};
-
-function authReducer(state: AuthState, action: AuthAction): AuthState {
-  switch (action.type) {
-    case 'LOGIN_SUCCESS':
-      return {
-        ...state,
-        user: action.payload.user,
-        token: action.payload.token,
-        isAuthenticated: true,
-        isLoading: false,
-      };
-    case 'LOGOUT':
-      return {
-        ...state,
-        user: null,
-        token: null,
-        isAuthenticated: false,
-        isLoading: false,
-      };
-    case 'UPDATE_USER':
-      return {
-        ...state,
-        user: action.payload,
-      };
-    case 'SET_LOADING':
-      return {
-        ...state,
-        isLoading: action.payload,
-      };
-    default:
-      return state;
-  }
-}
-
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [state, dispatch] = useReducer(authReducer, initialState);
+  const [user, setUser] = useState<User | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  useEffect(() => {
-    // Check for existing session
-    const checkAuth = async () => {
-      const token = localStorage.getItem('token');
-      if (token) {
-        try {
-          const { data } = await api.get('/auth/me');
-          dispatch({
-            type: 'LOGIN_SUCCESS',
-            payload: { user: data, token },
-          });
-        } catch (error) {
-          localStorage.removeItem('token');
-          dispatch({ type: 'SET_LOADING', payload: false });
-        }
-      } else {
-        dispatch({ type: 'SET_LOADING', payload: false });
+  // Initialize auth state from localStorage
+  useState(() => {
+    const storedUser = localStorage.getItem('user');
+    const token = localStorage.getItem('token');
+    
+    if (storedUser && token) {
+      try {
+        setUser(JSON.parse(storedUser));
+        setIsAuthenticated(true);
+        // Set default auth header for future requests
+        api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      } catch (e) {
+        // If parsing fails, clean up
+        localStorage.removeItem('user');
+        localStorage.removeItem('token');
       }
-    };
-
-    checkAuth();
-  }, []);
+    }
+  });
 
   const login = async (email: string, password: string) => {
     try {
-      const { data } = await api.post('/auth/login', { email, password });
-      localStorage.setItem('token', data.token);
-      dispatch({
-        type: 'LOGIN_SUCCESS',
-        payload: { user: data.user, token: data.token },
-      });
-    } catch (error) {
-      throw new Error('Invalid credentials');
+      const response = await api.post('/auth/login', { email, password });
+      
+      if (response.data.token && response.data.user) {
+        const { token, user: userData } = response.data;
+        
+        // Store in localStorage
+        localStorage.setItem('token', token);
+        localStorage.setItem('user', JSON.stringify(userData));
+        
+        // Update state
+        setUser(userData);
+        setIsAuthenticated(true);
+        
+        // Set default auth header for future requests
+        api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+        
+        return { success: true };
+      } else {
+        return { success: false, message: 'Invalid response from server' };
+      }
+    } catch (error: any) {
+      console.error('Login error:', error);
+      const message = error.response?.data?.message || 'Login failed. Please try again.';
+      return { success: false, message };
     }
   };
 
-  const register = async (email: string, displayName: string, password: string) => {
+  const register = async (name: string, email: string, password: string) => {
     try {
-      const { data } = await api.post('/auth/register', { email, displayName, password });
-      localStorage.setItem('token', data.token);
-      dispatch({
-        type: 'LOGIN_SUCCESS',
-        payload: { user: data.user, token: data.token },
-      });
-    } catch (error) {
-      throw new Error('Registration failed');
+      const response = await api.post('/auth/register', { name, email, password });
+      
+      if (response.data.token && response.data.user) {
+        const { token, user: userData } = response.data;
+        
+        // Store in localStorage
+        localStorage.setItem('token', token);
+        localStorage.setItem('user', JSON.stringify(userData));
+        
+        // Update state
+        setUser(userData);
+        setIsAuthenticated(true);
+        
+        // Set default auth header for future requests
+        api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+        
+        return { success: true };
+      } else {
+        return { success: false, message: 'Invalid response from server' };
+      }
+    } catch (error: any) {
+      console.error('Registration error:', error);
+      const message = error.response?.data?.message || 'Registration failed. Please try again.';
+      return { success: false, message };
     }
   };
 
   const logout = () => {
+    // Clear localStorage
     localStorage.removeItem('token');
-    dispatch({ type: 'LOGOUT' });
+    localStorage.removeItem('user');
+    
+    // Clear state
+    setUser(null);
+    setIsAuthenticated(false);
+    
+    // Remove default auth header
+    delete api.defaults.headers.common['Authorization'];
   };
 
-  const updateUser = (updates: Partial<User>) => {
-    if (state.user) {
-      const updatedUser = { ...state.user, ...updates };
-      dispatch({ type: 'UPDATE_USER', payload: updatedUser });
+  const updateUser = (userData: Partial<User>) => {
+    if (user) {
+      const updatedUser = { ...user, ...userData };
+      setUser(updatedUser);
+      localStorage.setItem('user', JSON.stringify(updatedUser));
     }
   };
 
   return (
     <AuthContext.Provider
       value={{
-        ...state,
+        user,
+        isAuthenticated,
         login,
         register,
         logout,
-        updateUser,
+        updateUser
       }}
     >
       {children}

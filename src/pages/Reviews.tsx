@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Star, Search } from 'lucide-react';
+import { Star, Search, Plus } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import {
   Select,
@@ -9,9 +9,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
 import ReviewCard from '@/components/ReviewCard';
 import api from '@/services/api';
-import type { Review } from '@/services/mockData';
+import type { Review } from '@/types';
+import { useAuth } from '@/context/AuthContext';
 
 export default function Reviews() {
   const [reviews, setReviews] = useState<Review[]>([]);
@@ -19,6 +31,15 @@ export default function Reviews() {
   const [searchTerm, setSearchTerm] = useState('');
   const [ratingFilter, setRatingFilter] = useState('');
   const [sortBy, setSortBy] = useState<'newest' | 'helpful'>('newest');
+  const [isAddReviewOpen, setIsAddReviewOpen] = useState(false);
+  const [newReview, setNewReview] = useState({
+    rating: 5,
+    title: '',
+    body: '',
+    destination: ''
+  });
+  const [submitting, setSubmitting] = useState(false);
+  const { user, isAuthenticated } = useAuth();
 
   useEffect(() => {
     fetchReviews();
@@ -39,6 +60,50 @@ export default function Reviews() {
       console.error('Failed to fetch reviews:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleAddReview = async () => {
+    if (!isAuthenticated) {
+      alert('Please log in to add a review');
+      return;
+    }
+
+    if (!newReview.destination.trim() || !newReview.title.trim() || !newReview.body.trim()) {
+      alert('Please fill in all required fields');
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      const reviewData = {
+        author: user?.name || 'Anonymous',
+        avatar: user?.avatar || null,
+        rating: newReview.rating,
+        title: newReview.title,
+        body: newReview.body,
+        destination: newReview.destination,
+        date: new Date().toISOString()
+      };
+
+      await api.post('/reviews', reviewData);
+      
+      // Reset form and close dialog
+      setNewReview({
+        rating: 5,
+        title: '',
+        body: '',
+        destination: ''
+      });
+      setIsAddReviewOpen(false);
+      
+      // Refresh reviews
+      fetchReviews();
+    } catch (error) {
+      console.error('Failed to add review:', error);
+      alert('Failed to add review. Please try again.');
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -157,7 +222,7 @@ export default function Reviews() {
                   ease: "easeOut"
                 }}
               >
-                <ReviewCard review={review} />
+                <ReviewCard review={review} onDelete={fetchReviews} />
               </motion.div>
             ))}
           </div>
@@ -173,6 +238,106 @@ export default function Reviews() {
             <p className="text-white/90 text-xl font-medium">No reviews found matching your criteria</p>
           </motion.div>
         )}
+      </div>
+
+      {/* Floating Add Review Button */}
+      <div className="fixed bottom-8 right-8 z-20">
+        <Dialog open={isAddReviewOpen} onOpenChange={setIsAddReviewOpen}>
+          <DialogTrigger asChild>
+            <Button 
+              size="lg" 
+              className="bg-accent hover:bg-accent/90 text-primary font-bold h-14 w-14 rounded-full shadow-lg transform transition hover:scale-105 p-0"
+            >
+              <Plus className="h-6 w-6" />
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[425px] bg-white">
+            <DialogHeader>
+              <DialogTitle>Add Your Travel Review</DialogTitle>
+              <DialogDescription>
+                Share your experience with fellow travelers
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="destination" className="text-right">
+                  Destination
+                </Label>
+                <Input
+                  id="destination"
+                  value={newReview.destination}
+                  onChange={(e) => setNewReview({...newReview, destination: e.target.value})}
+                  className="col-span-3"
+                  placeholder="Where did you travel?"
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="title" className="text-right">
+                  Title
+                </Label>
+                <Input
+                  id="title"
+                  value={newReview.title}
+                  onChange={(e) => setNewReview({...newReview, title: e.target.value})}
+                  className="col-span-3"
+                  placeholder="Give your review a title"
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label className="text-right">
+                  Rating
+                </Label>
+                <div className="col-span-3 flex items-center space-x-1">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button
+                      key={star}
+                      onClick={() => setNewReview({...newReview, rating: star})}
+                      className="focus:outline-none"
+                    >
+                      <Star
+                        className={`h-6 w-6 ${
+                          star <= newReview.rating
+                            ? 'fill-yellow-400 text-yellow-400'
+                            : 'text-gray-300'
+                        }`}
+                      />
+                    </button>
+                  ))}
+                  <span className="ml-2 text-sm text-gray-500">
+                    {newReview.rating} star{newReview.rating !== 1 ? 's' : ''}
+                  </span>
+                </div>
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="body" className="text-right">
+                  Review
+                </Label>
+                <Textarea
+                  id="body"
+                  value={newReview.body}
+                  onChange={(e) => setNewReview({...newReview, body: e.target.value})}
+                  className="col-span-3"
+                  placeholder="Share your travel experience..."
+                  rows={4}
+                />
+              </div>
+            </div>
+            <div className="flex justify-end space-x-2">
+              <Button
+                variant="outline"
+                onClick={() => setIsAddReviewOpen(false)}
+              >
+                Cancel
+              </Button>
+              <Button 
+                onClick={handleAddReview}
+                disabled={submitting}
+              >
+                {submitting ? 'Adding...' : 'Add Review'}
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );

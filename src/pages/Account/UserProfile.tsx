@@ -1,58 +1,91 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Edit, Grid3x3, Heart, MessageCircle, Loader2 } from 'lucide-react';
+import { Grid3x3, Heart, MessageCircle, Loader2, UserPlus, UserCheck } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/context/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import api from '@/services/api';
 
 interface Post {
   id: string;
   dataUrl: string;
   caption: string;
-  likes: number;
-  comments: number;
   createdAt: string;
 }
 
-export default function Profile() {
-  const { user } = useAuth();
+interface UserProfile {
+  email: string;
+  name: string;
+  photos: Post[];
+}
+
+export default function UserProfile() {
+  const { userId } = useParams();
+  const { user: currentUser } = useAuth();
   const navigate = useNavigate();
-  const [posts, setPosts] = useState<Post[]>([]);
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isFollowing, setIsFollowing] = useState(false);
 
   useEffect(() => {
-    if (user) {
-      fetchUserPosts();
+    if (userId) {
+      fetchUserProfile();
     }
-  }, [user]);
+  }, [userId]);
 
-  const fetchUserPosts = async () => {
+  const fetchUserProfile = async () => {
     try {
       setLoading(true);
-      // Fetch the user's posts from the backend
-      const response = await api.get(`/gallery/photos?email=${user?.email}`);
-      const userPosts = response.data.map((photo: any) => ({
-        id: photo.id,
-        dataUrl: photo.images[0],
-        caption: photo.caption,
-        likes: photo.likes,
-        comments: photo.comments,
-        createdAt: photo.createdAt
-      }));
-      setPosts(userPosts);
+      const response = await api.get(`/gallery/friends/profile?email=${userId}`);
+      setUserProfile(response.data);
     } catch (error) {
-      console.error('Failed to fetch posts:', error);
-      setPosts([]);
+      console.error('Failed to fetch user profile:', error);
+      navigate('/gallery');
     } finally {
       setLoading(false);
     }
   };
 
-  if (!user) {
-    navigate('/account/login');
-    return null;
+  const handleFollow = async () => {
+    if (!currentUser) {
+      navigate('/account/login');
+      return;
+    }
+
+    try {
+      if (isFollowing) {
+        // Unfollow
+        await api.delete('/gallery/friends', {
+          data: { email: currentUser.email, friendEmail: userProfile?.email }
+        });
+      } else {
+        // Follow
+        await api.post('/gallery/friends', {
+          email: currentUser.email,
+          friendEmail: userProfile?.email
+        });
+      }
+      setIsFollowing(!isFollowing);
+    } catch (error) {
+      console.error('Failed to update follow status:', error);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (!userProfile) {
+    return (
+      <div className="text-center py-12">
+        <p>User not found</p>
+      </div>
+    );
   }
 
   return (
@@ -89,42 +122,49 @@ export default function Profile() {
           <div className="flex items-center gap-8">
             {/* Avatar */}
             <Avatar className="h-32 w-32 border-4 border-white/30">
-              <AvatarImage src={user.avatar} alt={user.name} />
+              <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(userProfile.name)}`} alt={userProfile.name} />
               <AvatarFallback className="text-4xl bg-gradient-to-br from-primary to-accent text-white">
-                {user.name?.charAt(0) || 'U'}
+                {userProfile.name?.charAt(0) || 'U'}
               </AvatarFallback>
             </Avatar>
 
             {/* User Info */}
             <div className="flex-1 space-y-4">
               <div className="flex items-center gap-4">
-                <h1 className="text-2xl font-bold text-white">{user.name}</h1>
-                <Button 
-                  onClick={() => navigate('/account/settings')}
-                  className="glass backdrop-blur-md bg-white/20 border border-white/30 text-white hover:bg-white/30"
-                >
-                  <Edit className="mr-2 h-4 w-4" />
-                  Edit Profile
-                </Button>
+                <h1 className="text-2xl font-bold text-white">{userProfile.name}</h1>
+                {currentUser && currentUser.email !== userProfile.email && (
+                  <Button 
+                    onClick={handleFollow}
+                    className="glass backdrop-blur-md bg-white/20 border border-white/30 text-white hover:bg-white/30"
+                  >
+                    {isFollowing ? (
+                      <>
+                        <UserCheck className="mr-2 h-4 w-4" />
+                        Following
+                      </>
+                    ) : (
+                      <>
+                        <UserPlus className="mr-2 h-4 w-4" />
+                        Follow
+                      </>
+                    )}
+                  </Button>
+                )}
               </div>
 
               {/* Stats */}
               <div className="flex gap-8">
                 <div className="text-center">
-                  <p className="text-2xl font-bold text-white">{posts.length}</p>
+                  <p className="text-2xl font-bold text-white">{userProfile.photos.length}</p>
                   <p className="text-sm text-white/70">posts</p>
                 </div>
                 <div className="text-center">
-                  <p className="text-2xl font-bold text-white">
-                    {posts.reduce((sum, post) => sum + post.likes, 0)}
-                  </p>
-                  <p className="text-sm text-white/70">likes</p>
+                  <p className="text-2xl font-bold text-white">0</p>
+                  <p className="text-sm text-white/70">followers</p>
                 </div>
                 <div className="text-center">
-                  <p className="text-2xl font-bold text-white">
-                    {posts.reduce((sum, post) => sum + post.comments, 0)}
-                  </p>
-                  <p className="text-sm text-white/70">comments</p>
+                  <p className="text-2xl font-bold text-white">0</p>
+                  <p className="text-sm text-white/70">following</p>
                 </div>
               </div>
 
@@ -140,13 +180,9 @@ export default function Profile() {
         </div>
 
         {/* Posts Grid */}
-        {loading ? (
-          <div className="flex justify-center items-center h-64">
-            <Loader2 className="h-8 w-8 animate-spin text-white" />
-          </div>
-        ) : posts.length > 0 ? (
+        {userProfile.photos.length > 0 ? (
           <div className="grid grid-cols-3 gap-1 md:gap-2">
-            {posts.map((post, index) => (
+            {userProfile.photos.map((post, index) => (
               <motion.div
                 key={post.id}
                 initial={{ opacity: 0, scale: 0.9 }}
@@ -163,11 +199,11 @@ export default function Profile() {
                 <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-6">
                   <div className="flex items-center gap-2 text-white">
                     <Heart className="h-6 w-6 fill-white" />
-                    <span className="font-semibold">{post.likes}</span>
+                    <span className="font-semibold">0</span>
                   </div>
                   <div className="flex items-center gap-2 text-white">
                     <MessageCircle className="h-6 w-6 fill-white" />
-                    <span className="font-semibold">{post.comments}</span>
+                    <span className="font-semibold">0</span>
                   </div>
                 </div>
               </motion.div>
@@ -177,15 +213,9 @@ export default function Profile() {
           <div className="glass backdrop-blur-xl bg-white/10 border border-white/20 rounded-2xl p-12 text-center">
             <Grid3x3 className="h-16 w-16 mx-auto text-white/50 mb-4" />
             <h3 className="text-xl font-semibold text-white mb-2">No posts yet</h3>
-            <p className="text-white/70 mb-4">
-              Start sharing your travel adventures!
+            <p className="text-white/70">
+              This user hasn't shared any travel moments yet.
             </p>
-            <Button 
-              onClick={() => navigate('/gallery')}
-              className="glass backdrop-blur-md bg-white/20 border border-white/30 text-white hover:bg-white/30"
-            >
-              Upload Your First Post
-            </Button>
           </div>
         )}
       </div>

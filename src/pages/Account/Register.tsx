@@ -5,13 +5,12 @@ import { Mail, Lock, User, Loader2, Compass } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card } from '@/components/ui/card';
 import { useAuth } from '@/context/AuthContext';
 import { toast } from 'sonner';
 
 export default function Register() {
   const [email, setEmail] = useState('');
-  const [displayName, setDisplayName] = useState('');
+  const [name, setName] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -22,30 +21,57 @@ export default function Register() {
     e.preventDefault();
 
     if (password !== confirmPassword) {
-      toast.error('Passwords do not match');
+      toast.error('Passwords do not match', {
+        description: 'Please make sure both passwords are identical.',
+        duration: 5000,
+      });
       return;
     }
 
     if (password.length < 6) {
-      toast.error('Password must be at least 6 characters');
+      toast.error('Password too short', {
+        description: 'Password must be at least 6 characters.',
+        duration: 5000,
+      });
       return;
     }
 
     setLoading(true);
 
     try {
-      await register(email, displayName, password);
-      toast.success('Account created successfully!');
-      navigate('/');
-    } catch (error) {
-      toast.error('Registration failed. Please try again.');
+      const result = await register(name, email, password);
+      
+      if (result.success) {
+        toast.success('Account created successfully!', {
+          description: 'Welcome to TravelLog! You can now start sharing your adventures.',
+          duration: 3000,
+        });
+        // Add a small delay to ensure the toast is visible before navigation
+        setTimeout(() => {
+          navigate('/');
+        }, 1000);
+      } else {
+        toast.error('Registration failed', {
+          description: result.message || 'Please try again.',
+          duration: 5000,
+        });
+      }
+    } catch (error: any) {
+      console.error('Registration error:', error);
+      toast.error('Registration failed', {
+        description: 'An unexpected error occurred. Please try again.',
+        duration: 5000,
+      });
     } finally {
       setLoading(false);
     }
   };
 
   const handleGoogleSignup = () => {
-    toast.info('Google authentication requires backend integration');
+    toast.info('Google authentication', {
+      description: 'Google authentication requires backend integration',
+      duration: 3000,
+    });
   };
 
   return (
@@ -124,14 +150,14 @@ export default function Register() {
               transition={{ delay: 0.5 }}
               className="space-y-2"
             >
-              <Label htmlFor="displayName" className="text-foreground font-medium">Display Name</Label>
+              <Label htmlFor="name" className="text-foreground font-medium">Full Name</Label>
               <div className="relative group">
                 <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
                 <Input
-                  id="displayName"
+                  id="name"
                   placeholder="John Doe"
-                  value={displayName}
-                  onChange={(e) => setDisplayName(e.target.value)}
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
                   className="pl-10 bg-background/50 border-white/20 focus:border-primary focus:bg-background/70 transition-all"
                   required
                 />
@@ -208,16 +234,16 @@ export default function Register() {
             >
               <Button 
                 type="submit" 
-                className="w-full bg-gradient-hero hover:opacity-90 transition-all hover:scale-[1.02] shadow-lg mt-2" 
+                className="w-full bg-gradient-hero hover:opacity-90 transition-all hover:scale-[1.02] shadow-lg" 
                 disabled={loading}
               >
                 {loading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Creating account...
+                    Creating Account...
                   </>
                 ) : (
-                  'Begin Your Adventure'
+                  'Start Your Journey'
                 )}
               </Button>
             </motion.div>
@@ -232,7 +258,7 @@ export default function Register() {
                 <span className="w-full border-t border-white/20" />
               </div>
               <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-background/40 px-3 text-foreground/70 backdrop-blur-sm">Or continue with</span>
+                <span className="bg-background/40 px-4 py-1 text-foreground/70 backdrop-blur-sm rounded-full">Or continue with</span>
               </div>
             </motion.div>
 
@@ -279,7 +305,7 @@ export default function Register() {
             <p className="text-sm text-foreground/70">
               Already have an account?{' '}
               <Link to="/account/login" className="text-primary hover:text-primary-glow font-semibold hover:underline transition-colors">
-                Login
+                Sign In
               </Link>
             </p>
           </motion.div>
