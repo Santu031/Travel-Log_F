@@ -45,6 +45,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = async (email: string, password: string) => {
     try {
+      // The API service baseURL already includes the base URL
+      // We just need to provide the relative path from the API root
       const response = await api.post('/auth/login', { email, password });
       
       if (response.data.token && response.data.user) {
@@ -74,6 +76,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const register = async (name: string, email: string, password: string) => {
     try {
+      // The API service baseURL already includes the base URL
+      // We just need to provide the relative path from the API root
       const response = await api.post('/auth/register', { name, email, password });
       
       if (response.data.token && response.data.user) {

@@ -42,7 +42,7 @@ export default function Settings() {
   const handleSave = async () => {
     try {
       // Update user profile with avatar
-      const response = await api.put('/auth/profile', {
+      const response = await api.put('/api/auth/profile', {
         name,
         avatar: avatarUrl
       });
