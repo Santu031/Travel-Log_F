@@ -184,7 +184,7 @@ export default function Reviews() {
             </SelectContent>
           </Select>
 
-          <Select value={sortBy} onValueChange={(value: any) => setSortBy(value)}>
+          <Select value={sortBy} onValueChange={(value: 'newest' | 'helpful') => setSortBy(value)}>
             <SelectTrigger className="glass backdrop-blur-md bg-white/20 border-white/30 text-white focus:bg-white/30 transition-all">
               <SelectValue />
             </SelectTrigger>

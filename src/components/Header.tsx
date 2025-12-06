@@ -27,165 +27,139 @@ export default function Header() {
     { to: '/', label: 'Home' },
     { to: '/gallery', label: 'Gallery' },
     { to: '/reviews', label: 'Reviews' },
+    { to: '/maps', label: 'Maps' },
     { to: '/ai-recs', label: 'AI Recommendations' },
-    { to: '/Maps', label: "Maps" },
     { to: '/report', label: 'Report' },
     { to: '/about', label: 'About' },
   ];
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-white/10 glass backdrop-blur-xl">
+    <header className="border-b bg-background/80 backdrop-blur-sm sticky top-0 z-50">
       <div className="container mx-auto px-4">
-        <div className="flex h-16 items-center justify-between">
+        <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2 group">
-            <div className="p-1.5 rounded-lg bg-gradient-hero shadow-md">
-              <Compass className="h-6 w-6" />
-            </div>
-            <span className="text-xl font-bold text-gradient-primary group-hover:scale-105 transition-transform duration-300">TravelLog</span>
+          <Link to="/" className="flex items-center gap-2">
+            <Compass className="h-6 w-6 text-primary" />
+            <span className="text-xl font-bold text-gradient-primary">TravelLog</span>
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-1">
+          <nav className="hidden md:flex items-center gap-6">
             {navLinks.map((link) => (
               <Link
                 key={link.to}
                 to={link.to}
-                className="px-3 py-1.5 rounded-lg text-sm font-medium text-foreground/90 hover:text-primary hover:bg-primary/10 transition-all duration-300"
+                className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
               >
                 {link.label}
               </Link>
             ))}
           </nav>
 
-          {/* Auth Section */}
-          <div className="hidden md:flex items-center gap-2">
-            {isAuthenticated && user ? (
+          {/* User Actions */}
+          <div className="flex items-center gap-2">
+            {isAuthenticated ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-                    <Avatar>
-                      <AvatarImage src={user.avatar} alt={user.name} />
-                      <AvatarFallback className="text-xs">{user.name?.charAt(0) || user.email?.charAt(0) || 'U'}</AvatarFallback>
+                    <Avatar className="h-8 w-8">
+                      <AvatarImage src={user?.avatar} alt={user?.name} />
+                      <AvatarFallback>{user?.name?.charAt(0)}</AvatarFallback>
                     </Avatar>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuContent className="w-56" align="end" forceMount>
                   <div className="flex items-center justify-start gap-2 p-2">
-                    <div className="flex flex-col space-y-1">
-                      <p className="text-sm font-medium">{user.name}</p>
-                      <p className="text-xs text-muted-foreground">{user.email}</p>
+                    <div className="flex flex-col space-y-1 leading-none">
+                      <p className="font-medium text-sm">{user?.name}</p>
+                      <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
                     </div>
                   </div>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => navigate('/account/profile')}>
-                    <User className="mr-2 h-4 w-4" />
-                    Profile
+                  <DropdownMenuItem asChild>
+                    <Link to="/account/profile" className="cursor-pointer">
+                      <User className="mr-2 h-4 w-4" />
+                      <span>Profile</span>
+                    </Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigate('/account/settings')}>
-                    <Settings className="mr-2 h-4 w-4" />
-                    Settings
+                  <DropdownMenuItem asChild>
+                    <Link to="/account/settings" className="cursor-pointer">
+                      <Settings className="mr-2 h-4 w-4" />
+                      <span>Settings</span>
+                    </Link>
                   </DropdownMenuItem>
-                  {user.role === 'admin' && (
-                    <DropdownMenuItem onClick={() => navigate('/admin')}>
-                      Admin Panel
-                    </DropdownMenuItem>
-                  )}
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleLogout}>
+                  <DropdownMenuItem onClick={handleLogout} className="cursor-pointer">
                     <LogOut className="mr-2 h-4 w-4" />
-                    Logout
+                    <span>Log out</span>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
               <>
-                <Button variant="ghost" size="sm" onClick={() => navigate('/account/login')} className="font-medium">
-                  Login
+                <Button variant="ghost" asChild size="sm">
+                  <Link to="/account/login">Login</Link>
                 </Button>
-                <Button size="sm" onClick={() => navigate('/account/register')} className="btn-secondary-glow font-medium">
-                  Sign Up
+                <Button asChild size="sm">
+                  <Link to="/account/register">Sign Up</Link>
                 </Button>
               </>
             )}
-          </div>
 
-          {/* Mobile Menu Button */}
-          <button
-            className="md:hidden p-1.5 rounded-md hover:bg-primary/10 transition-colors"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            aria-label="Toggle menu"
-          >
-            {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-          </button>
+            {/* Mobile menu button */}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="md:hidden"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            >
+              {mobileMenuOpen ? (
+                <X className="h-5 w-5" />
+              ) : (
+                <Menu className="h-5 w-5" />
+              )}
+            </Button>
+          </div>
         </div>
 
-        {/* Mobile Menu */}
+        {/* Mobile Navigation */}
         {mobileMenuOpen && (
-          <div className="md:hidden py-3 space-y-3 border-t border-white/10 animate-fade-in">
-            {navLinks.map((link) => (
-              <Link
-                key={link.to}
-                to={link.to}
-                className="block py-1.5 text-foreground/80 hover:text-primary transition-colors"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                {link.label}
-              </Link>
-            ))}
-            <div className="pt-3 border-t border-white/10 space-y-2">
-              {isAuthenticated && user ? (
-                <>
-                  <Link
-                    to="/account/profile"
-                    className="block py-1.5 hover:text-primary transition-colors"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    Profile
-                  </Link>
-                  <Link
-                    to="/account/settings"
-                    className="block py-1.5 hover:text-primary transition-colors"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    Settings
-                  </Link>
-                  <button
-                    className="block py-1.5 w-full text-left hover:text-primary transition-colors"
-                    onClick={() => {
-                      handleLogout();
-                      setMobileMenuOpen(false);
-                    }}
-                  >
-                    Logout
-                  </button>
-                </>
+          <div className="md:hidden border-t py-4">
+            <nav className="flex flex-col gap-2">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.to}
+                  to={link.to}
+                  className="px-2 py-1 text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  {link.label}
+                </Link>
+              ))}
+              {isAuthenticated ? (
+                <Button
+                  variant="ghost"
+                  className="justify-start px-2 py-1 text-sm font-medium"
+                  onClick={handleLogout}
+                >
+                  <LogOut className="mr-2 h-4 w-4" />
+                  Log out
+                </Button>
               ) : (
-                <div className="flex flex-col gap-2">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="w-full justify-start font-medium"
-                    onClick={() => {
-                      navigate('/account/login');
-                      setMobileMenuOpen(false);
-                    }}
-                  >
-                    Login
+                <div className="flex gap-2 pt-2">
+                  <Button variant="ghost" asChild size="sm" className="flex-1">
+                    <Link to="/account/login" onClick={() => setMobileMenuOpen(false)}>
+                      Login
+                    </Link>
                   </Button>
-                  <Button
-                    size="sm"
-                    className="w-full btn-secondary-glow font-medium"
-                    onClick={() => {
-                      navigate('/account/register');
-                      setMobileMenuOpen(false);
-                    }}
-                  >
-                    Sign Up
+                  <Button asChild size="sm" className="flex-1">
+                    <Link to="/account/register" onClick={() => setMobileMenuOpen(false)}>
+                      Sign Up
+                    </Link>
                   </Button>
                 </div>
               )}
-            </div>
+            </nav>
           </div>
         )}
       </div>

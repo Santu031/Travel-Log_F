@@ -44,12 +44,11 @@ export interface AIRecommendation {
   description: string;
   itinerary: string[];
   score: number;
-  image: string;
   budget: string;
   duration: string;
   title?: string;
   location?: string;
-  imageUrl?: string;
+  wikipediaUrl?: string;
   date?: string;
   rating?: number;
 }
@@ -69,4 +68,11 @@ export interface Destination {
   budget?: string;
   duration?: string;
   itinerary?: string[];
+}
+
+export interface Story {
+  id: string;
+  userName: string;
+  userAvatar: string;
+  hasNewStory: boolean;
 }

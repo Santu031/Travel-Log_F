@@ -37,7 +37,7 @@ export default function Login() {
           duration: 5000,
         });
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Login error:', error);
       toast.error('Login failed', {
         description: 'An unexpected error occurred. Please try again.',

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { Edit, Grid3x3, Heart, MessageCircle, Loader2 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -22,18 +22,12 @@ export default function Profile() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (user) {
-      fetchUserPosts();
-    }
-  }, [user]);
-
-  const fetchUserPosts = async () => {
+  const fetchUserPosts = useCallback(async () => {
     try {
       setLoading(true);
       // Fetch the user's posts from the backend
       const response = await api.get(`/gallery/photos?email=${user?.email}`);
-      const userPosts = response.data.map((photo: any) => ({
+      const userPosts = response.data.map((photo: { id: string; images: string[]; caption: string; likes: number; comments: number; createdAt: string }) => ({
         id: photo.id,
         dataUrl: photo.images[0],
         caption: photo.caption,
@@ -48,7 +42,11 @@ export default function Profile() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user?.email]);
+
+  useEffect(() => {
+    fetchUserPosts();
+  }, [fetchUserPosts]); // Add fetchUserPosts to dependency array
 
   if (!user) {
     navigate('/account/login');

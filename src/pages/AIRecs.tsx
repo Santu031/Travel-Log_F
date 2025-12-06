@@ -16,150 +16,6 @@ const interests = [
   'Beach', 'Mountains', 'Culture', 'Food', 'Adventure', 'History', 'Shopping', 'Nightlife'
 ];
 
-// Get destination-specific image
-const getDestinationImage = (destination: string, index: number): string => {
-  // Curated set of destination-specific travel images with direct URLs
-  const destinationImages: Record<string, string[]> = {
-    'paris': [
-      "https://images.unsplash.com/photo-1508050919630-b135583b29ab?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1502602898669-a35987c10b26?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1549144576-88d40733a18f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80"
-    ],
-    'london': [
-      "https://images.unsplash.com/photo-1513635269975-522855d38293?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1559827283-753d819d0610?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1517292926430-5d2c4e5330e3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80"
-    ],
-    'new york': [
-      "https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1501594907352-04cda38ebc29?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1517292926430-5d2c4e5330e3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80"
-    ],
-    'tokyo': [
-      "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1547767427-7f9b0d8d0d0a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1550340445-31a89c922572?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80"
-    ],
-    'bali': [
-      "https://images.unsplash.com/photo-1518542444957-b152e47201bd?w=800",
-      "https://images.unsplash.com/photo-1566665797739-1674de7a421a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1594035910387-fea477f42082?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80"
-    ],
-    'kerala': [
-      "https://images.unsplash.com/photo-1566665797739-1674de7a421a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1505228395891-9a51e781709d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1511882150382-421056c89033?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80"
-    ],
-    'kyoto': [
-      "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1550340445-31a89c922572?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80"
-    ],
-    'italy': [
-      "https://images.unsplash.com/photo-1518542444957-b152e47201bd?w=800",
-      "https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1556911220-e15b29be8c8f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80"
-    ],
-    'japan': [
-      "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1550340445-31a89c922572?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1547767427-7f9b0d8d0d0a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80"
-    ],
-    'france': [
-      "https://images.unsplash.com/photo-1508050919630-b135583b29ab?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1502602898669-a35987c10b26?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1549144576-88d40733a18f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80"
-    ],
-    'india': [
-      "https://images.unsplash.com/photo-1524492412937-b28074a5d7da?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1566665797739-1674de7a421a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1594035910387-fea477f42082?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80"
-    ],
-    'goa': [
-      "https://images.unsplash.com/photo-1566665797739-1674de7a421a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1594035910387-fea477f42082?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1505228395891-9a51e781709d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80"
-    ],
-    'delhi': [
-      "https://images.unsplash.com/photo-1524492412937-b28074a5d7da?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1566665797739-1674de7a421a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1594035910387-fea477f42082?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80"
-    ],
-    'mumbai': [
-      "https://images.unsplash.com/photo-1524492412937-b28074a5d7da?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1566665797739-1674de7a421a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1594035910387-fea477f42082?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80"
-    ],
-    'bangkok': [
-      "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1550340445-31a89c922572?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1547767427-7f9b0d8d0d0a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80"
-    ],
-    'dubai': [
-      "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1550340445-31a89c922572?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1547767427-7f9b0d8d0d0a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80"
-    ],
-    'singapore': [
-      "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1550340445-31a89c922572?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1547767427-7f9b0d8d0d0a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80"
-    ]
-  };
-  
-  // Default images if no match found
-  const defaultImages = [
-    "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1511882150382-421056c89033?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80"
-  ];
-  
-  if (!destination) return defaultImages[index % defaultImages.length];
-  
-  const lowerDest = destination.toLowerCase().trim();
-  
-  // Check for exact matches first
-  for (const [key, images] of Object.entries(destinationImages)) {
-    if (lowerDest === key) {
-      return images[index % images.length];
-    }
-  }
-  
-  // Check for partial matches (more inclusive)
-  for (const [key, images] of Object.entries(destinationImages)) {
-    if (lowerDest.includes(key) || key.includes(lowerDest)) {
-      return images[index % images.length];
-    }
-  }
-
-  const destinationVariations: Record<string, string> = {
-    'new york city': 'new york',
-    'nyc': 'new york',
-    'los angeles': 'california',
-    'san francisco': 'california',
-    'washington dc': 'washington',
-    'washington d.c.': 'washington',
-    'london uk': 'london',
-    'london england': 'london',
-    'paris france': 'paris',
-    'tokyo japan': 'tokyo',
-    'mexico city': 'mexico',
-    'rio de janeiro': 'rio',
-    'sao paulo': 'brazil',
-    'new delhi': 'delhi',
-    'bombay': 'mumbai',
-    'bangalore': 'bengaluru'
-  };
-  
-  const normalizedDest = destinationVariations[lowerDest] || lowerDest;
-  for (const [key, images] of Object.entries(destinationImages)) {
-    if (normalizedDest.includes(key) || key.includes(normalizedDest)) {
-      return images[index % images.length];
-    }
-  }
-  return defaultImages[index % defaultImages.length];
-};
-
 export default function AIRecs() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -207,11 +63,8 @@ export default function AIRecs() {
           query: formData.place || 'travel destinations' 
         });
         
-        // Create specific images for each recommendation using reliable Unsplash URLs
-        const recommendationsWithImages = response.data.map((item: any, index: number) => {
-          // Get destination-specific image based on the search query (place)
-          const imageUrl = getDestinationImage(formData.place, index);
-          
+        // Process recommendations with Wikipedia URLs
+        const recommendationsWithWiki = response.data.map((item: { name: string; description: string; wikipediaUrl?: string }, index: number) => {
           return {
             id: String(index + 1),
             destination: item.name,
@@ -219,7 +72,7 @@ export default function AIRecs() {
             description: item.description,
             location: formData.place || 'Various',
             country: formData.place?.split(', ')?.[1] || formData.place || 'Various',
-            image: imageUrl,
+            wikipediaUrl: item.wikipediaUrl || null,
             score: Math.floor(Math.random() * 40) + 60, // Random score between 60-100
             budget: 'Contact for pricing',
             duration: 'Flexible',
@@ -231,7 +84,7 @@ export default function AIRecs() {
           };
         });
         
-        data = recommendationsWithImages;
+        data = recommendationsWithWiki;
       }
 
       // Ensure we have an array and it's not empty
@@ -244,32 +97,38 @@ export default function AIRecs() {
         toast.warning('No recommendations found. Try adjusting your preferences.');
         setRecommendations([]);
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Recommendation error:', error);
       let errorMessage = 'Failed to generate recommendations. ';
       
       // More detailed error handling
-      if (error.code === 'ECONNABORTED') {
-        errorMessage += 'Request timeout. AI recommendations can take up to 30 seconds to generate. Please wait and try again.';
-      } else if (error.response) {
-        // Server responded with error status
-        if (error.response.status === 400) {
-          errorMessage += 'Invalid request data. Please check your inputs.';
-        } else if (error.response.status === 408) {
-          errorMessage += error.response.data?.message || 'Request timeout. Please try again.';
-        } else if (error.response.status === 500) {
-          errorMessage += error.response.data?.message || 'Server error. Please try again later.';
-        } else if (error.response.status === 503) {
-          errorMessage += error.response.data?.message || 'AI service is currently overloaded. Please try again in a few minutes.';
+      if (error instanceof Error) {
+        if (error.name === 'ECONNABORTED') {
+          errorMessage += 'Request timeout. AI recommendations can take up to 30 seconds to generate. Please wait and try again.';
+        } else if ('response' in error) {
+          // Type assertion for Axios error
+          const axiosError = error as { response?: { status?: number; data?: { message?: string } } };
+          // Server responded with error status
+          if (axiosError.response?.status === 400) {
+            errorMessage += 'Invalid request data. Please check your inputs.';
+          } else if (axiosError.response?.status === 408) {
+            errorMessage += axiosError.response.data?.message || 'Request timeout. Please try again.';
+          } else if (axiosError.response?.status === 500) {
+            errorMessage += axiosError.response.data?.message || 'Server error. Please try again later.';
+          } else if (axiosError.response?.status === 503) {
+            errorMessage += axiosError.response.data?.message || 'AI service is currently overloaded. Please try again in a few minutes.';
+          } else {
+            errorMessage += axiosError.response.data?.message || `Server error (${axiosError.response?.status}).`;
+          }
+        } else if ('request' in error) {
+          // Request was made but no response received
+          errorMessage += 'Unable to connect to server. Please make sure the backend is running and accessible.';
         } else {
-          errorMessage += error.response.data?.message || `Server error (${error.response.status}).`;
+          // Something else happened
+          errorMessage += error.message || 'Unknown error occurred.';
         }
-      } else if (error.request) {
-        // Request was made but no response received
-        errorMessage += 'Unable to connect to server. Please make sure the backend is running and accessible.';
       } else {
-        // Something else happened
-        errorMessage += error.message || 'Unknown error occurred.';
+        errorMessage += 'Unknown error occurred.';
       }
       
       toast.error(errorMessage);
@@ -465,26 +324,7 @@ export default function AIRecs() {
                   onClick={() => handleViewDetails(rec)}
                 >
                   <Card className="overflow-hidden glass border-white/20 shadow-2xl">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-0">
-                      {/* Image */}
-                      <div className="aspect-video md:aspect-auto overflow-hidden relative group">
-                        <img
-                          src={rec.image || "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80"}
-                          alt={rec.destination || rec.title}
-                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                          onError={(e) => {
-                            console.log('Image failed to load:', rec.image);
-                            // Fallback to a reliable travel image
-                            const target = e.target as HTMLImageElement;
-                            target.src = "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80";
-                          }}
-                          onLoad={(e) => {
-                            console.log('Image loaded successfully:', rec.image);
-                          }}
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                      </div>
-
+                    <div className="grid grid-cols-1 gap-0">
                       {/* Content */}
                       <div className="p-8 space-y-4 bg-gradient-to-br from-background/50 to-primary/5">
                         <div className="flex items-start justify-between">
@@ -555,12 +395,26 @@ export default function AIRecs() {
                               </span>
                             )}
                           </div>
-                          <Button variant="outline" className="btn-hero-outline" onClick={(e) => {
-                            e.stopPropagation();
-                            handleViewDetails(rec);
-                          }}>
-                            View Details
-                          </Button>
+                          <div className="flex gap-2">
+                            {rec.wikipediaUrl && (
+                              <Button 
+                                variant="outline" 
+                                className="btn-hero-outline"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  window.open(rec.wikipediaUrl, '_blank');
+                                }}
+                              >
+                                View on Wikipedia
+                              </Button>
+                            )}
+                            <Button variant="outline" className="btn-hero-outline" onClick={(e) => {
+                              e.stopPropagation();
+                              handleViewDetails(rec);
+                            }}>
+                              View Details
+                            </Button>
+                          </div>
                         </div>
                       </div>
                     </div>

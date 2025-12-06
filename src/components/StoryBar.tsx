@@ -1,27 +1,17 @@
-import { useState, useEffect } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Plus } from 'lucide-react';
-import api from '@/services/api';
 import { useAuth } from '@/context/AuthContext';
-
-interface Story {
-  id: string;
-  userName: string;
-  userAvatar: string;
-  hasNewStory: boolean;
-}
+import api from '@/services/api';
+import type { Story } from '@/types';
 
 export default function StoryBar() {
+  const { user } = useAuth();
   const [stories, setStories] = useState<Story[]>([]);
   const [loading, setLoading] = useState(true);
-  const { user } = useAuth();
 
-  useEffect(() => {
-    fetchStories();
-  }, []);
-
-  const fetchStories = async () => {
+  const fetchStories = useCallback(async () => {
     try {
       setLoading(true);
       // Fetch stories from the backend
@@ -38,7 +28,7 @@ export default function StoryBar() {
       
       // Fetch some recent users who have posted photos
       const response = await api.get('/gallery/users');
-      const userStories: Story[] = response.data.slice(0, 5).map((user: any) => ({
+      const userStories: Story[] = response.data.slice(0, 5).map((user: { id: string; name: string; avatar: string }) => ({
         id: user.id,
         userName: user.name,
         userAvatar: user.avatar,
@@ -53,7 +43,11 @@ export default function StoryBar() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user]);
+
+  useEffect(() => {
+    fetchStories();
+  }, [fetchStories]);
 
   if (loading) {
     return (

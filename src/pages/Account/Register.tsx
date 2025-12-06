@@ -56,7 +56,7 @@ export default function Register() {
           duration: 5000,
         });
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Registration error:', error);
       toast.error('Registration failed', {
         description: 'An unexpected error occurred. Please try again.',

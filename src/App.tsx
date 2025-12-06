@@ -20,6 +20,7 @@ import UserProfile from "./pages/Account/UserProfile";
 import Settings from "./pages/Account/Settings";
 import NotFound from "./pages/NotFound";
 import Report from "./pages/Report";
+import Maps from "./pages/Maps";
 
 import TravelLogForm from "./pages/TravelLogForm";
 import UploadPhoto from "./pages/UploadPhoto.jsx";
@@ -41,6 +42,7 @@ const App = () => (
                 <Route path="/about" element={<About />} />
                 <Route path="/gallery" element={<Gallery />} />
                 <Route path="/reviews" element={<Reviews />} />
+                <Route path="/maps" element={<Maps />} />
                 <Route path="/ai-recs" element={<AIRecs />} />
                 <Route path="/ai-recs/:id" element={<AIRecDetail />} />
                 <Route path="/account/login" element={<Login />} />

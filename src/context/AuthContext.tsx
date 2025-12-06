@@ -45,8 +45,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = async (email: string, password: string) => {
     try {
-      // The API service baseURL already includes the base URL
-      // We just need to provide the relative path from the API root
       const response = await api.post('/auth/login', { email, password });
       
       if (response.data.token && response.data.user) {
@@ -67,17 +65,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       } else {
         return { success: false, message: 'Invalid response from server' };
       }
-    } catch (error: any) {
-      console.error('Login error:', error);
-      const message = error.response?.data?.message || 'Login failed. Please try again.';
+    } catch (error: unknown) {
+      const message = (error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Login failed. Please try again.';
       return { success: false, message };
     }
   };
 
   const register = async (name: string, email: string, password: string) => {
     try {
-      // The API service baseURL already includes the base URL
-      // We just need to provide the relative path from the API root
       const response = await api.post('/auth/register', { name, email, password });
       
       if (response.data.token && response.data.user) {
@@ -98,9 +93,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       } else {
         return { success: false, message: 'Invalid response from server' };
       }
-    } catch (error: any) {
-      console.error('Registration error:', error);
-      const message = error.response?.data?.message || 'Registration failed. Please try again.';
+    } catch (error: unknown) {
+      const message = (error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Registration failed. Please try again.';
       return { success: false, message };
     }
   };
