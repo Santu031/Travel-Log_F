@@ -16,8 +16,6 @@ const getBaseURL = () => {
     }
     return url;
   }
-  
-  // For production on Vercel, explicitly use your backend URL
   return 'https://travel-log-b.vercel.app/api';
 };
 
